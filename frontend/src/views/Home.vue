@@ -46,6 +46,7 @@ export default {
           }
         );
         console.log(result);
+        this.$refs.file.value = '';
       } catch (error) {
         console.error(error.response.data);
       }
