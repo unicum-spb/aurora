@@ -52,7 +52,8 @@ class Parser {
       if (arr[1] && arr[1].split('-')[0]) {
 
         const result = {
-          key: cyrillicToTranslit().transform(arr[0], '_').toLowerCase(),
+          // key: cyrillicToTranslit().transform(arr[0], '_').toLowerCase(),
+          key: arr[0],
           min: normalizeNumber(arr[1].split('-')[0]),
           max: normalizeNumber(arr[1].split('-')[1]),
           value: normalizeNumber(arr[2]),
