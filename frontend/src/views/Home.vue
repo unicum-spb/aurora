@@ -5,9 +5,12 @@
 
     <div class="container">
     <div class="large-12 medium-12 small-12 cell">
-      <label>File
-        <input type="file" id="file" ref="file" @change="onSubmit($event.target.files)" />
-      </label>
+      <form @submit.prevent="onSubmit">
+        <label>File
+          <input type="file" id="file" ref="file" @change="onSubmit" />
+        </label>
+        <button type="submit">submit</button>
+      </form>
     </div>
   </div>
 
@@ -28,7 +31,8 @@ export default {
   },
 
   methods: {
-    async onSubmit (files) {
+    async onSubmit () {
+      const files = document.getElementById('file').files;
       console.log(files);
       
       const formData = new FormData();
@@ -37,18 +41,19 @@ export default {
       }
 
       try {
-        const result = await axios.post( 'http://localhost:3000/upload',
+        const result = await axios.post(
+          'http://localhost:3000/upload',
           formData,
           {
             headers: {
-              'Content-Type': 'multipart/form-data'
+              'Content-Type': 'multipart/form-data',
             }
           }
         );
         console.log(result);
         this.$refs.file.value = '';
       } catch (error) {
-        console.error(error.response.data);
+        console.error(error.response);
       }
     }
   }

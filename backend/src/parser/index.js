@@ -1,6 +1,5 @@
 const { parse }           = require('node-html-parser');
 const { load }            = require('cheerio');
-const cyrillicToTranslit  = require('cyrillic-to-translit-js');
 
 const { normalizeNumber, parseDate } = require('./utils');
 
