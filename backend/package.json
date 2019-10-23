@@ -20,7 +20,7 @@
     "iconv": "^2.3.5",
     "iconv-lite": "^0.5.0",
     "jszip": "^3.2.1",
-    "mongoose": "^5.5.11",
+    "mongoose": "^5.7.5",
     "node-autodetect-utf8-cp1251-cp866": "^0.1.0",
     "node-html-parser": "^1.1.15"
   },
