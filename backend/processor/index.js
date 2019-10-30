@@ -1,12 +1,12 @@
 const fs    = require('fs');
 const JSZip = require('jszip');
 
-const Parser = require('../parser');
+const Report = require('../report');
 
 
 class Processor {
   constructor () {
-    this._uploadsPath = `${ process.cwd() }/uploads/`;
+    this._uploadsPath = `${ process.cwd() }/temp/`;
     this._names   = [];
     this._files   = [];
     this._reports = [];
@@ -25,7 +25,7 @@ class Processor {
       try {
 
         for (const file of this._files) {
-          const report = new Parser(file);
+          const report = new Report(file);
             
           await report
             .createStructure()
@@ -35,8 +35,16 @@ class Processor {
 
           this._reports.push(report.get());
         }
+
+        const { meta } = new Report(this._files[0])
+                      .extractMetaInformation();
+
+        const result = {
+          meta,
+          reports: this._reports
+        };
         
-        resolve(this._reports);
+        resolve(result);
       } catch (error) {
         reject(error);
       }

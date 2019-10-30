@@ -1,9 +1,16 @@
-const { parse }           = require('node-html-parser');
-const { load }            = require('cheerio');
+const { parse } = require('node-html-parser');
+const { load }  = require('cheerio');
 
-const { normalizeNumber, parseDate } = require('./utils');
+const {
+  normalizeNumber,
+  parsePhysique,
+  parseName,
+  parseDate,
+  parseSex,
+  parseAge
+} = require('./utils');
 
-class Parser {
+class Report {
   constructor (document = '') {
     this._source = document;
     this._structure = [];
@@ -16,9 +23,13 @@ class Parser {
     return this._result;
   }
 
+  get meta () {
+    return this._meta;
+  }
+
   createStructure () {
     const src = parse(this._source).querySelectorAll('.td');
-
+    
     for (const { structuredText } of src) {
       this._structure.push(structuredText);
     }
@@ -51,8 +62,7 @@ class Parser {
       if (arr[1] && arr[1].split('-')[0]) {
 
         const result = {
-          // key: cyrillicToTranslit().transform(arr[0], '_').toLowerCase(),
-          key: arr[0],
+          title: arr[0],
           min: normalizeNumber(arr[1].split('-')[0]),
           max: normalizeNumber(arr[1].split('-')[1]),
           value: normalizeNumber(arr[2]),
@@ -76,8 +86,8 @@ class Parser {
       if (element.hasOwnProperty(key)) {
         const { type, name, children } = element[key];
 
-        if (type == 'tag' && name == 'td') {
-          if (children && children[0].type == 'text') {
+        if (type === 'tag' && name === 'td') {
+          if (children && children[0].type === 'text') {
             metaArray.push(children[0].data.split(': ')[1]);
           }
         }
@@ -86,9 +96,9 @@ class Parser {
 
     this._meta = {
       name: metaArray[0],
-      sex: metaArray[1],
-      age: metaArray[2],
-      physique: metaArray[3],
+      sex: parseSex(metaArray[1]),
+      age: parseAge(metaArray[2]),
+      physique: parsePhysique(metaArray[3]),
       date: parseDate(metaArray[4]),
     };
 
@@ -97,4 +107,4 @@ class Parser {
 
 }
 
-module.exports = Parser;
+module.exports = Report;

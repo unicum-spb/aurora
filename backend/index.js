@@ -1,7 +1,7 @@
 const server = require('./server');
 // import connection from './connect';
 
-const { PORT } = require('../config');
+const { PORT } = require('./config');
 
 function main() {
   try {
