@@ -8,7 +8,7 @@ const { python } = require('../adapters');
 
 const server = express();
 
-server.use(cors());
+server.use(cors({ origin: '*' }));
 server.use(bodyParser.json());
 server.use(fileUpload({
   createParentPath: true,
