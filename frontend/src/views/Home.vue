@@ -1,62 +1,71 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-
-    <div class="container">
     <div class="large-12 medium-12 small-12 cell">
-      <form @submit.prevent="onSubmit">
+      <form ref="form">
         <label>File
-          <input type="file" id="file" ref="file" @change="onSubmit" />
+          <input
+            id="file"
+            ref="file"
+            type="file"
+            @change="onSubmit($event.target)"
+          >
         </label>
-        <button type="submit">submit</button>
+        <button type="submit">
+          submit
+        </button>
       </form>
     </div>
   </div>
-
-  </div>
 </template>
 
-<script>
+
+<script lang="ts">
+/* eslint-disable no-restricted-syntax */
+
+import { Vue, Component } from 'vue-property-decorator';
 
 import axios from 'axios';
 
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import worker from '../Worker';
 
-export default {
-  name: 'home',
-  components: {
-    HelloWorld
-  },
+@Component({ inheritAttrs: false })
+export default class Home extends Vue {
+  async onSubmit ({ files }: HTMLInputElement) {
+    console.log({ files });
 
-  methods: {
-    async onSubmit () {
-      const files = document.getElementById('file').files;
-      console.log(files);
-      
-      const formData = new FormData();
-      for (const file of files) {
+    const formData = new FormData();
+
+    for (const key in files) {
+      if (key) {
+        const file = files[Number(key)];
         formData.append('file', file);
       }
+    }
 
-      try {
-        const result = await axios.post(
-          'http://localhost:3000/upload',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            }
+    try {
+      const result = await axios.post(
+        'http://localhost:3000/upload',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
           }
-        );
-        console.log(result);
-        this.$refs.file.value = '';
-      } catch (error) {
-        console.error(error.response);
-      }
+        }
+      );
+      console.log(result);
+      const form = this.$refs.form as HTMLFormElement;
+      form.reset();
+    } catch (error) {
+      console.error(error.response);
     }
   }
-};
+}
 
 </script>
+
+
+<style lang="scss">
+
+.home {}
+
+</style>
