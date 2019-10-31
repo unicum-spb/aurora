@@ -15,8 +15,8 @@ server.use(fileUpload({
 }));
 
 // nginx reverse proxy(unsafe if app is bound to the public ip address)
-server.enable('trust proxy');
-server.set('trust proxy', () => true );
+// server.enable('trust proxy');
+// server.set('trust proxy', () => true );
 
 // server.use((req, res, next) => {
 //   res.header('X-Frame-Options', 'SAMEORIGIN');
