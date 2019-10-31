@@ -44,7 +44,7 @@ server.post('/hello', (req, res) => {
 //   res.status(201).send('Ok');
 // });
 
-server.post('/', ({ files, headers }, res ) => {
+server.post('/upload', ({ files, headers }, res ) => {
   console.log({ headers });
   console.log({ files });
   

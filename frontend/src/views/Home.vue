@@ -50,7 +50,7 @@ export default class Home extends Vue {
 
     try {
       const result = await axios.post(
-        `${process.env.VUE_APP_API_URL}/`,
+        `${process.env.VUE_APP_API_URL}/upload`,
         formData,
         {
           headers: {
