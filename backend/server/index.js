@@ -20,7 +20,7 @@ server.get('/', (req, res) => {
   res.json({ hello: 'Hello World!' });
 });
 
-server.post('/', (req, res) => {
+server.post('/hello', (req, res) => {
   console.log('post / -', req.headers);
 
   res.json({ hello: 'Hello World!' });

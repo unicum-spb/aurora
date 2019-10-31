@@ -13,9 +13,12 @@
         <button type="submit">
           submit
         </button>
-        <button type="button" @click="hello">
-hello
-</button>
+        <button
+          type="button"
+          @click="hello"
+        >
+          hello
+        </button>
       </form>
     </div>
   </div>
@@ -66,13 +69,8 @@ export default class Home extends Vue {
   async hello () {
     try {
       const result = await axios.post(
-        `${process.env.VUE_APP_API_URL}/`,
+        `${process.env.VUE_APP_API_URL}/hello`,
         {},
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          }
-        }
       );
       console.log(result);
     } catch (error) {
