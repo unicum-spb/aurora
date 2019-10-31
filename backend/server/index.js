@@ -32,7 +32,8 @@ server.post('/hello', (req, res) => {
 // });
 
 server.post('/', ({ files, headers }, res ) => {
-  console.log(files, headers);
+  console.log({ headers });
+  console.log({ files });
   
   if (!Object.keys(files).length) return res.status(400).send('No files were uploaded.');
   for (const key in files) {
@@ -63,12 +64,14 @@ server.post('/', ({ files, headers }, res ) => {
               await processor.extractZIP(file.name);
               const result = await processor.buildReports();
     
-              res.json(result);
+              return res.json(result);
             });
         });
       }
     }
   }
+
+  return res.json({ success: 'false' });
 });
 
 module.exports = server;
