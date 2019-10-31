@@ -15,13 +15,15 @@ server.use(fileUpload({
 }));
 
 server.get('/', (req, res) => {
-  console.log(req.headers);
+  console.log('get / -', req.headers);
   
   res.json({ hello: 'Hello World!' });
 });
 
 server.post('/', (req, res) => {
-  res.send('Hello World!');
+  console.log('post / -', req.headers);
+
+  res.json({ hello: 'Hello World!' });
 });
 
 // server.post('/upload', ({ files }, res) => {
