@@ -31,7 +31,7 @@ server.post('/hello', (req, res) => {
 //   res.status(201).send('Ok');
 // });
 
-server.post('/upload', ({ files, headers }, res ) => {
+server.post('/', ({ files, headers }, res ) => {
   console.log(files, headers);
   
   if (!Object.keys(files).length) return res.status(400).send('No files were uploaded.');
