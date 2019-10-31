@@ -15,6 +15,8 @@ server.use(fileUpload({
 }));
 
 server.get('/', (req, res) => {
+  console.log(req.headers);
+  
   res.json({ hello: 'Hello World!' });
 });
 
@@ -27,8 +29,8 @@ server.post('/', (req, res) => {
 //   res.status(201).send('Ok');
 // });
 
-server.post('/upload', ({ files }, res ) => {
-  console.log(files);
+server.post('/upload', ({ files, headers }, res ) => {
+  console.log(files, headers);
   
   if (!Object.keys(files).length) return res.status(400).send('No files were uploaded.');
   for (const key in files) {
