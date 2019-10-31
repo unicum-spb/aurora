@@ -18,14 +18,14 @@ server.use(fileUpload({
 server.enable('trust proxy');
 server.set('trust proxy', () => true );
 
-server.use((req, res, next) => {
-  res.header('X-Frame-Options', 'SAMEORIGIN');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-  next();
-});
+// server.use((req, res, next) => {
+//   res.header('X-Frame-Options', 'SAMEORIGIN');
+//   res.header('Access-Control-Allow-Credentials', 'true');
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+//   res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+//   next();
+// });
 
 server.get('/', (req, res) => {
   console.log('get / -', req.headers);
