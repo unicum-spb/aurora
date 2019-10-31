@@ -82,9 +82,11 @@ server.post('/upload', ({ files, headers }, res ) => {
         });
       }
     }
+    else {
+      return res.json({ success: 'false' });
+    }
   }
 
-  return res.json({ success: 'false' });
 });
 
 module.exports = server;
