@@ -14,19 +14,6 @@ server.use(fileUpload({
   createParentPath: true,
 }));
 
-// nginx reverse proxy(unsafe if app is bound to the public ip address)
-// server.enable('trust proxy');
-// server.set('trust proxy', () => true );
-
-// server.use((req, res, next) => {
-//   res.header('X-Frame-Options', 'SAMEORIGIN');
-//   res.header('Access-Control-Allow-Credentials', 'true');
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//   res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-//   next();
-// });
-
 server.get('/', (req, res) => {
   console.log('get / -', req.headers);
   
@@ -38,11 +25,6 @@ server.post('/hello', (req, res) => {
 
   res.json({ hello: 'Hello World!' });
 });
-
-// server.post('/upload', ({ files }, res) => {
-//   console.log(files);
-//   res.status(201).send('Ok');
-// });
 
 server.post('/upload', ({ files, headers }, res ) => {
   console.log({ headers });
@@ -60,7 +42,7 @@ server.post('/upload', ({ files, headers }, res ) => {
 
           console.log(`${process.cwd()}/uploads/${file.name}`);
 
-          python({
+          return python({
             args: [
               `${process.cwd()}/uploads/${file.name}`,
               `${process.cwd()}/temp/${file.name}`

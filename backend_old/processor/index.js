@@ -51,7 +51,7 @@ class Processor {
     });
   }
   
-  extractZIP (name) {
+  extractZIP (name = '') {
     return new Promise(( resolve, reject ) => {
       fs.readFile(this._uploadsPath + name, async (err, data) => {
         if (err) reject(err);
