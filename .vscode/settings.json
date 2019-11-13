@@ -41,5 +41,7 @@
       "autoFix": true
     }
   ],
-  "stylelint.enable": true
+  "stylelint.enable": true,
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": false
 }
