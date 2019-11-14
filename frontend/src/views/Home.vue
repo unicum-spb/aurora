@@ -7,6 +7,7 @@
             id="file"
             ref="file"
             type="file"
+            multiple
             @change="onSubmit($event.target)"
           >
         </label>
@@ -68,9 +69,8 @@ export default class Home extends Vue {
 
   async hello () {
     try {
-      const result = await axios.post(
-        `${process.env.VUE_APP_API_URL}/hello`,
-        {},
+      const result = await axios.get(
+        `${process.env.VUE_APP_API_URL}/ping`,
       );
       console.log(result);
     } catch (error) {
