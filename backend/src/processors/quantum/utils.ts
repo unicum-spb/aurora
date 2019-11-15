@@ -45,7 +45,7 @@ export function parseSex (sex: Scalars['String']) {
   if (sex !== SexCyrillic.Male) {
     return Sex.Female;
   } else {
-    return Sex.Female;
+    return Sex.Male;
   }
 }
 
