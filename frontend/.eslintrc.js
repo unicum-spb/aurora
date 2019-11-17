@@ -1,32 +1,32 @@
 module.exports = {
   root: true,
   env: {
-    node: true,
+    browser: true,
+    node: false
   },
   settings: {
     'import/resolver': {
       alias: {
         map: [
-          [ '@', './src' ],
+          ['@', './src']
         ],
-        extensions: [ '.ts', '.d.ts', '.tsx', '.vue', '.js', '.jsx', '.json' ],
-      },
-    },
+        extensions: ['.ts', '.d.ts', '.tsx', '.vue', '.js', '.jsx', '.json']
+      }
+    }
   },
   extends: [
     'airbnb-base',
-    '@vue/airbnb',
-    'plugin:vue/essential',
-    'plugin:vue/strongly-recommended',
     'plugin:vue/recommended',
+    'plugin:vue/strongly-recommended',
     '@vue/typescript',
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript',
   ],
   rules: {
-    'no-console': 'off',
-    'no-debugger': 'off',
+    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'import/no-unresolved': 'off',
     'key-spacing': [
       'error',
       {
@@ -54,7 +54,7 @@ module.exports = {
     ],
     'object-curly-newline': [
       'error',
-      { consistent: true }
+      { 'consistent': true }
     ],
     semi: [
       'error',
@@ -77,7 +77,7 @@ module.exports = {
       'error',
       { before: true, after: true }
     ],
-    'array-bracket-spacing': [ 'error',
+    'array-bracket-spacing': ['error',
       'always',
       {
         singleValue: false,
@@ -105,6 +105,6 @@ module.exports = {
     'no-return-assign': ['off'],
   },
   parserOptions: {
-    parser: '@typescript-eslint/parser',
+    parser: '@typescript-eslint/parser'
   },
 };
