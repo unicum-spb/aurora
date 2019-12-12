@@ -4,20 +4,24 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import { BindingKey } from '@loopback/context';
-import { PasswordHasher } from './services/hash.password.bcryptjs';
 import { TokenService, UserService } from '@loopback/authentication';
-import { User } from './models';
-import { Credentials } from './repositories';
+
+import { PasswordHasher } from './services/hash.password.bcryptjs';
+import { ReportService } from './services/report-service';
+
+import { User, QuantumReportModel } from './models';
+import { UserCredentials, QuantumReportCredentials } from './repositories';
+import { TypeQuantumReportModel } from './types';
 
 export namespace EnvironmentServiceConstants {
   export const ROOT = process.cwd();
-  export const UPLOAD_PATH = `${ ROOT }/uploads/`
-  export const TEMP_PATH = `${ ROOT }/temp/`
+  export const UPLOAD_PATH = `${ROOT}/uploads/`
+  export const TEMP_PATH = `${ROOT}/temp/`
 }
 
 export namespace TokenServiceConstants {
   export const TOKEN_SECRET_VALUE = 'myjwts3cr3t';
-  export const TOKEN_EXPIRES_IN_VALUE = '600';
+  export const TOKEN_EXPIRES_IN_VALUE = '6000';
 }
 
 export namespace TokenServiceBindings {
@@ -40,7 +44,13 @@ export namespace PasswordHasherBindings {
 }
 
 export namespace UserServiceBindings {
-  export const USER_SERVICE = BindingKey.create<UserService<User, Credentials>>(
+  export const USER_SERVICE = BindingKey.create<UserService<User, UserCredentials>>(
     'services.user.service',
+  );
+}
+
+export namespace ReportServiceBindings {
+  export const REPORT_SERVICE = BindingKey.create<ReportService<Array<Express.Multer.File>, Array<TypeQuantumReportModel>>>(
+    'services.report.service',
   );
 }

@@ -1,4 +1,4 @@
-import { ReportMeta, Scalars, ReportResult, ReportField } from '@/types';
+import { ReportMeta, Scalars, ReportField } from '@/types';
 
 import { load } from 'cheerio';
 
@@ -17,8 +17,8 @@ export class Report {
   protected meta: ReportMeta;
 
   protected $: CheerioStatic;
-  
-  constructor (document: string = '') {
+
+  constructor(document: string) {
     this.source = document;
     this.$ = load(document);
     this.structure = [];
@@ -38,24 +38,24 @@ export class Report {
     };
   }
 
-  getResult () {
+  getResult() {
     const { title, result } = this;
-    
+
     return {
       title,
       fields: result,
     };
   }
 
-  getMetaData () {
+  getMetaData() {
     return this.meta;
   }
 
-  createStructure () {
+  createStructure() {
     const parsed = parse(this.source) as HTMLElement;
-    
+
     const src = parsed.querySelectorAll('.td');
-    
+
     for (const { structuredText } of src) {
       this.structure.push(structuredText);
     }
@@ -65,12 +65,12 @@ export class Report {
     return this;
   }
 
-  createData () {
+  createData() {
     const preresult: Array<Scalars['String']> = [];
 
     this.structure.forEach(val => {
       if (preresult.length === 3) {
-        this.data.push([ ...preresult ]);
+        this.data.push([...preresult]);
         preresult.splice(0, preresult.length);
       }
 
@@ -85,7 +85,7 @@ export class Report {
     return this;
   }
 
-  convertToJSON () {
+  convertToJSON() {
     this.data.forEach(arr => {
       if (arr[1] && arr[1].split('-')[0] && arr[1].split('-')[1]) {
 
@@ -105,7 +105,7 @@ export class Report {
     return this;
   }
 
-  extractTitle () {
+  extractTitle() {
     const { $ } = this;
 
     const $el = $('table:nth-child(1) font');
@@ -116,16 +116,16 @@ export class Report {
     return this;
   }
 
-  extractMetaInformation () {
+  extractMetaInformation() {
     const { $ } = this;
+
+    const $el = $('table:nth-child(2) > tbody > tr td');
 
     const metaArray = [];
 
-    const element = $('table:nth-child(2) > tbody > tr td');
-
-    for (const key in element) {
-      if (element.hasOwnProperty(key)) {
-        const { type, name, children } = element[key];
+    for (const key in $el) {
+      if ($el[key]) {
+        const { type, name, children } = $el[key];
 
         if (type === 'tag' && name === 'td') {
           if (children && children[0].data && children[0].type === 'text') {

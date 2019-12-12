@@ -4,4 +4,5 @@
 // License text available at https://opensource.org/licenses/MIT
 
 export * from './ping.controller';
-export * from './user.controller';export * from './upload.controller';
+export * from './user.controller';
+export * from './report.controller';

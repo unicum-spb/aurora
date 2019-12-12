@@ -1,4 +1,6 @@
-import { Scalars, ReportResult, QuantumReportModel } from '@/types';
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable no-useless-catch */
+import { Scalars, ReportResult, TypeQuantumReportModel } from '@/types';
 
 import * as fs from 'fs';
 import * as JSZip from 'jszip';
@@ -14,22 +16,22 @@ export class Processor {
   private extractedFiles: Array<Scalars['String']>;
   private reports: Array<ReportResult>;
 
-  constructor (file: Express.Multer.File) {
+  constructor(file: Express.Multer.File) {
     this.file = file;
     this.names = [];
     this.extractedFiles = [];
     this.reports = [];
   }
 
-  getFileList () {
+  getFileList() {
     return this.extractedFiles;
   }
 
-  getNameList () {
+  getNameList() {
     return this.names;
   }
 
-  buildReports () {
+  buildReports() {
     const { reports, extractedFiles } = this;
 
     try {
@@ -50,7 +52,7 @@ export class Processor {
         .extractMetaInformation()
         .getMetaData();
 
-      const result: QuantumReportModel = {
+      const result: TypeQuantumReportModel = {
         meta,
         reports
       };
@@ -61,11 +63,11 @@ export class Processor {
     }
   }
 
-  extractFiles () {
+  extractFiles() {
     const { file } = this;
 
     return new Promise<Array<Scalars['String']>>((resolve, reject) => {
-      fs.readFile(`${ EnvironmentServiceConstants.TEMP_PATH }/${ file.filename }`, async (err, data) => {
+      fs.readFile(`${EnvironmentServiceConstants.TEMP_PATH}/${file.filename}`, async (err, data) => {
         if (err) reject(err);
 
         try {
@@ -78,7 +80,7 @@ export class Processor {
           this.names = files.filter((file, i) => file.includes('.htm') && i != 0);
 
           // извлекаю каждый .htm файл как строку
-          // добавляю в массив файлов 
+          // добавляю в массив файлов
           for (const fileName of this.names) {
             // @ts-ignore
             if (JSZip.support.string) {
@@ -98,7 +100,7 @@ export class Processor {
     });
   }
 
-  async unpackZIP () {
+  async unpackZIP() {
     const { file } = this;
 
     try {
@@ -119,7 +121,7 @@ export class Processor {
             resolve(true);
           });
       });
-      
+
     } catch (error) {
       console.error('extractProcess - ', error);
     }

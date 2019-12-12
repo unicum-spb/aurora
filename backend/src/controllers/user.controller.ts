@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 
+import { inject } from '@loopback/core';
 import { repository } from '@loopback/repository';
 import { post, param, get, requestBody, HttpErrors } from '@loopback/rest';
-import { inject } from '@loopback/core';
 import { authenticate, TokenService, UserService } from '@loopback/authentication';
 import { UserProfile, securityId, SecurityBindings } from '@loopback/security';
 
@@ -13,12 +13,16 @@ import { validateCredentials } from '../services/validator';
 import { User } from '../models';
 import { UserRepository } from '../repositories';
 
-import { Credentials } from '../repositories/user.repository';
+import { UserCredentials } from '../repositories/user.repository';
 import { PasswordHasher } from '../services/hash.password.bcryptjs';
 
 import { TokenServiceBindings, PasswordHasherBindings, UserServiceBindings } from '../keys';
 import { OPERATION_SECURITY_SPEC } from '../utils/security-spec';
+
 import { Scalars } from '@/types';
+
+console.log(UserServiceBindings.USER_SERVICE);
+
 
 export class UserController {
   constructor(
@@ -28,7 +32,7 @@ export class UserController {
     @inject(TokenServiceBindings.TOKEN_SERVICE)
     public jwtService: TokenService,
     @inject(UserServiceBindings.USER_SERVICE)
-    public userService: UserService<User, Credentials>,
+    public userService: UserService<User, UserCredentials>,
   ) { }
 
   @post('/users', {
@@ -97,7 +101,10 @@ export class UserController {
         description: 'The current user profile',
         content: {
           'application/json': {
-            schema: UserProfileSchema,
+            schema: {
+              'x-ts-type': User,
+            },
+            // schema: UserProfileSchema,
           },
         },
       },
@@ -115,7 +122,7 @@ export class UserController {
     return currentUserProfile;
   }
 
-  @post('/users/login', {
+  @post('/auth/sign-in', {
     responses: {
       '200': {
         description: 'Token',
@@ -135,10 +142,12 @@ export class UserController {
     },
   })
   async login(
-    @requestBody(CredentialsRequestBody) credentials: Credentials,
-  ): Promise<{ token: Scalars['String'] }> {
+    @requestBody(CredentialsRequestBody) credentials: UserCredentials,
+  ): Promise<{ user: User, token: Scalars['String'] }> {
     // ensure the user exists, and the password is correct
     const user = await this.userService.verifyCredentials(credentials);
+
+    delete user.password;
 
     // convert a User object into a UserProfile object (reduced set of properties)
     const userProfile = this.userService.convertToUserProfile(user);
@@ -146,6 +155,6 @@ export class UserController {
     // create a JSON Web Token based on the user profile
     const token = await this.jwtService.generateToken(userProfile);
 
-    return { token };
+    return { user, token };
   }
 }

@@ -1,4 +1,4 @@
-export enum SexCyrillic  {
+export enum SexCyrillic {
   Male = 'Mужчины',
   Female = 'Женщины',
 }

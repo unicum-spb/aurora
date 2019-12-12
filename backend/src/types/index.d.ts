@@ -9,6 +9,8 @@ export type Scalars = {
   Date: Date | string | number;
 };
 
+export type Dictionary<T> = { [key: string]: T };
+export type ErrorHandler = (err: Error) => void;
 
 export type Pending = boolean;
 
@@ -18,9 +20,6 @@ export type PendingObject = {
 }
 
 export type Sex = 'male' | 'female';
-
-export type Dictionary<T> = { [key: Scalars['String']]: T };
-export type ErrorHandler = (err: Error) => void;
 
 export type Physique = {
   weight: Scalars['Number'];
@@ -47,7 +46,8 @@ export type ReportResult = {
   fields: Array<ReportField>;
 };
 
-export type QuantumReportModel = {
+export interface TypeQuantumReportModel {
+  id?: Scalars['String'];
   meta: ReportMeta;
   reports: Array<ReportResult>;
 };

@@ -4,7 +4,7 @@ import { AuroraApplication } from './application';
 
 export async function migrate(args: Array<Scalars['String']>) {
   const existingSchema = args.includes('--rebuild') ? 'drop' : 'alter';
-  console.log('Migrating schemas (%s existing schema)', existingSchema);
+  console.log('Migrating schemas (%s existing schema) - ', existingSchema);
 
   const app = new AuroraApplication();
   await app.boot();
@@ -16,7 +16,10 @@ export async function migrate(args: Array<Scalars['String']>) {
   process.exit(0);
 }
 
-migrate(process.argv).catch(err => {
-  console.error('Cannot migrate database schema', err);
+
+try {
+  migrate(process.argv);
+} catch (error) {
+  console.error('Cannot migrate database schema - ', error);
   process.exit(1);
-});
+}

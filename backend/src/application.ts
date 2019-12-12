@@ -24,6 +24,7 @@ import {
   TokenServiceBindings,
   UserServiceBindings,
   TokenServiceConstants,
+  ReportServiceBindings,
 } from './keys';
 import { JWTService } from './services/jwt-service';
 import { MyUserService } from './services/user-service';
@@ -31,6 +32,8 @@ import { PasswordHasherBindings } from './keys';
 import { BcryptHasher } from './services/hash.password.bcryptjs';
 import { JWTAuthenticationStrategy } from './authentication-strategies/jwt';
 import { SECURITY_SCHEME_SPEC } from './utils/security-spec';
+
+import { MyReportService } from './services/report-service';
 
 /**
  * Information from package.json
@@ -114,5 +117,6 @@ export class AuroraApplication extends BootMixin(
     this.bind(PasswordHasherBindings.PASSWORD_HASHER).toClass(BcryptHasher);
 
     this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
+    this.bind(ReportServiceBindings.REPORT_SERVICE).toClass(MyReportService);
   }
 }

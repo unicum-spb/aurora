@@ -1,5 +1,5 @@
 {
-  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "typescript.tsdk": "/node_modules/typescript/lib",
   "editor.wordWrap": "off",
   "editor.wordWrapColumn": 80,
   "files.exclude": {

@@ -40,7 +40,7 @@ export class JWTService implements TokenService {
       );
     } catch (error) {
       throw new HttpErrors.Unauthorized(
-        `Error verifying token : ${error.message}`,
+        `Error verifying token, ${error.message}`,
       );
     }
     return userProfile;
@@ -49,7 +49,7 @@ export class JWTService implements TokenService {
   async generateToken(userProfile: UserProfile): Promise<Scalars['String']> {
     if (!userProfile) {
       throw new HttpErrors.Unauthorized(
-        'Error generating token : userProfile is null',
+        'Error generating token, userProfile is null',
       );
     }
     const userInfoForToken = {
@@ -64,7 +64,7 @@ export class JWTService implements TokenService {
         expiresIn: Number(this.jwtExpiresIn),
       });
     } catch (error) {
-      throw new HttpErrors.Unauthorized(`Error encoding token : ${error}`);
+      throw new HttpErrors.Unauthorized(`Error encoding token, ${error}`);
     }
 
     return token;
