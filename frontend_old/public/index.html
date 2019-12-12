@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <title>frontend</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    
+    <meta name="supported-color-schemes" content="dark light">
+    <meta name="color-scheme" content="dark light">
+    <meta name="theme-color" content="">
+
+    <script>
+      // If `prefers-color-scheme` is not supported, fall back to light mode.
+      // In this case, light.css will be downloaded with `highest` priority.
+      if (!window.matchMedia('(prefers-color-scheme)').matches) {
+        document.documentElement.style.display = 'none';
+        document.head.insertAdjacentHTML(
+            'beforeend',
+            '<link rel="stylesheet" href="/css/light.css" onload="document.documentElement.style.display = ``">'
+        );
+      }
+    </script>
+
+    <link rel="stylesheet" href="/css/dark.css" media="(prefers-color-scheme: dark)">
+    <link rel="stylesheet" href="/css/light.css" media="(prefers-color-scheme: no-preference), (prefers-color-scheme: light)">
+    <!-- The main stylesheet -->
+    <link rel="stylesheet" href="/style.css">    
+       
+    <link
+      rel="manifest"
+      href="/manifest-light.webmanifest"
+      data-href-light="/manifest-light.webmanifest"
+      data-href-dark="/manifest-dark.webmanifest"
+    >     
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but frontend doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+
+    <div id="wrapper" class="wrapper"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
