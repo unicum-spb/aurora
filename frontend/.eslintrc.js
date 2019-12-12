@@ -2,109 +2,43 @@ module.exports = {
   root: true,
   env: {
     browser: true,
-    node: false
+    node: true,
+    es6: true
   },
-  settings: {
-    'import/resolver': {
-      alias: {
-        map: [
-          ['@', './src']
-        ],
-        extensions: ['.ts', '.d.ts', '.tsx', '.vue', '.js', '.jsx', '.json']
-      }
-    }
-  },
-  extends: [
-    'airbnb-base',
+  'extends': [
+    'eslint:recommended',
     'plugin:vue/recommended',
-    'plugin:vue/strongly-recommended',
-    '@vue/typescript',
-    'plugin:import/errors',
-    'plugin:import/warnings',
-    'plugin:import/typescript',
+    '@vue/standard',
+    '@vue/typescript'
   ],
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'import/no-unresolved': 'off',
-    'key-spacing': [
-      'error',
-      {
-        multiLine: {
-          beforeColon: false,
-          afterColon: true
-        },
-      }
-    ],
-    'arrow-parens': 'off',
-    'keyword-spacing': [
-      'error',
-      { before: true, after: true },
-    ],
-    'comma-spacing': [
-      'error',
-      { before: false, after: true }
-    ],
-    'comma-dangle': [
-      'error',
-      'only-multiline'
-    ],
-    'lines-between-class-members': [
-      'off'
-    ],
-    'object-curly-newline': [
-      'error',
-      { 'consistent': true }
-    ],
-    semi: [
-      'error',
-      'always'
-    ],
-    quotes: [
-      'error',
-      'single',
-      { avoidEscape: true }
-    ],
-    'quote-props': [
-      'error',
-      'as-needed'
-    ],
-    'no-floating-decimal': 'error',
-    'require-await': 'error',
-    'no-return-await': 'error',
-    'class-methods-use-this': 'off',
-    'arrow-spacing': [
-      'error',
-      { before: true, after: true }
-    ],
-    'array-bracket-spacing': ['error',
-      'always',
-      {
-        singleValue: false,
-        objectsInArrays: false,
-        arraysInArrays: false
-      },
-    ],
-    'space-infix-ops': [
-      'error',
-      { int32Hint: false }
-    ],
-    'space-before-function-paren': [
-      'error',
-      {
-        anonymous: 'always',
-        named: 'always',
-        asyncArrow: 'always'
-      }
-    ],
-    'block-spacing': [
-      'error',
-      'always'
-    ],
-    'prefer-default-export': ['off'],
-    'no-return-assign': ['off'],
+    'space-before-function-paren': [2, 'never'],
+    'vue/array-bracket-spacing': 'error',
+    'vue/arrow-spacing': 'error',
+    'vue/block-spacing': 'error',
+    'vue/brace-style': 'error',
+    'vue/camelcase': 'error',
+    'vue/comma-dangle': 'error',
+    'vue/component-name-in-template-casing': 'error',
+    'vue/eqeqeq': 'error',
+    'vue/key-spacing': 'error',
+    'vue/match-component-file-name': 'error',
+    'vue/object-curly-spacing': 'error'
   },
   parserOptions: {
     parser: '@typescript-eslint/parser'
   },
-};
+  overrides: [
+    {
+      files: [
+        '**/__tests__/*.{j,t}s?(x)',
+        '**/tests/unit/**/*.spec.{j,t}s?(x)'
+      ],
+      env: {
+        jest: true
+      }
+    }
+  ]
+}
