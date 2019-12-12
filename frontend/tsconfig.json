@@ -5,6 +5,7 @@
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
+    "preserveConstEnums": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "esModuleInterop": true,
@@ -12,8 +13,6 @@
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
-      "node",
-      "jest",
       "webpack-env"
     ],
     "paths": {
