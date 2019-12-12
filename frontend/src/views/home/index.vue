@@ -1,28 +1,32 @@
 <template>
   <div class="home">
     <div class="large-12 medium-12 small-12 cell">
-      <form
+      <v-form
         ref="form"
         @submit.prevent="onSubmit"
       >
-        <label>File
-          <input
-            id="file"
-            ref="file"
-            type="file"
-            multiple
-          >
-        </label>
-        <button type="submit">
+        <v-file-input
+          ref="file"
+          :label="$t('reports.upload')"
+          multiple
+          small-chips
+          show-size
+          counter
+          prepend-icon="mdi-paperclip"
+          outlined
+        />
+
+        <v-btn type="submit">
           submit
-        </button>
-        <button
+        </v-btn>
+
+        <v-btn
           type="button"
           @click="hello"
         >
           hello
-        </button>
-      </form>
+        </v-btn>
+      </v-form>
     </div>
     {{ reports }}
   </div>
@@ -32,29 +36,35 @@
 <script lang="ts">
 /* eslint-disable no-restricted-syntax */
 
-import { Vue, Component } from 'vue-property-decorator';
-import { Call } from 'vuex-pathify';
+import { Vue, Component, Ref } from 'vue-property-decorator';
+import { Call, Get } from 'vuex-pathify';
 
 import Axios from 'axios';
+
 import { TypeQuantumReportModel } from '@/types';
 
+interface IVFileInput {
+  lazyValue: Array<File>
+}
 
 @Component({ inheritAttrs: false })
 export default class Home extends Vue {
-  get reports () {
-    return this.$store.state.Reports.reports;
-  }
+  @Ref('file') $file!: IVFileInput;
 
-  @Call('Reports/create') callReportsCreate!: (payload: FormData) => Promise<TypeQuantumReportModel>;
+  @Get('Reports/parsed') reports!: Array<TypeQuantumReportModel>;
+
+  @Call('Reports/create') callReportsCreate!: (payload: FormData) => Promise<boolean>;
 
   async onSubmit () {
-    const { files } = this.$refs.file as HTMLInputElement;
+    const { lazyValue } = this.$file;
+
+    console.dir(this.$file);
 
     const formData = new FormData();
 
-    for (const key in files) {
+    for (const key in lazyValue) {
       if (key) {
-        const file = files[Number(key)];
+        const file = lazyValue[Number(key)];
         formData.append('file', file);
       }
     }

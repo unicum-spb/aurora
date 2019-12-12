@@ -22,10 +22,12 @@ const state: RootState['Reports'] = {
   errors: {},
 };
 
-const getters: GetterTree<RootState['Reports'], RootState> = {};
+const getters: GetterTree<RootState['Reports'], RootState> = {
+  parsed: state => state.reports,
+};
 
 const actions: ActionTree<RootState['Reports'], RootState> = {
-  async create ({ commit }, payload: any) {
+  async create ({ commit }, payload: FormData) {
     const key = 'signIn';
 
     commit('SET_PENDING', { key });
