@@ -1,15 +1,16 @@
-const server = require('./server');
-// import connection from './connect';
+// Copyright IBM Corp. 2018. All Rights Reserved.
+// Node module: loopback4-example-shopping
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
 
-const { PORT } = require('./config');
+const application = require('./dist');
 
-function main() {
-  try {
-    // await connection.create(MONGODB_URI);
-    server.listen(3000, () => console.log('Server is running at port ' + 3000) );
-  } catch (error) {
-    console.error('Error on start - ', error);
-  }
+module.exports = application;
+
+if (require.main === module) {
+  // Run the application
+  application.main().catch(err => {
+    console.error('Cannot start the application.', err);
+    process.exit(1);
+  });
 }
-
-main();
