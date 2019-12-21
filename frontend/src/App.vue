@@ -1,12 +1,8 @@
 <template>
   <v-app id="wrapper">
-    <!-- <App-Sidebar /> -->
+    <App-Header />
 
-    <!-- <App-Header /> -->
-
-    <!-- <v-toolbar clipped-left app absolute>
-      <v-toolbar-title>Vuetify</v-toolbar-title>
-    </v-toolbar> -->
+    <App-Sidebar />
 
     <v-fade-transition
       appear
@@ -35,21 +31,21 @@ import { Get, Sync, Call } from 'vuex-pathify';
 
 import EventService from '@/services/event';
 
-// import AppHeader from './components/layout/AppHeader/index.vue';
-// import AppSidebar from './components/layout/AppSidebar/index.vue';
-// import AppNotification from './components/layout/AppNotification/index.vue';
-// import AppOfflineSnackbar from './components/layout/AppOfflineSnackbar.vue';
-// import AppNetworkErrorSnackBar from './components/layout/AppNetworkErrorSnackBar.vue';
+import AppHeader from './components/layout/AppHeader/index.vue';
+import AppSidebar from './components/layout/AppSidebar.vue';
+import AppNotification from './components/layout/AppNotification/index.vue';
+import AppOfflineSnackbar from './components/layout/AppOfflineSnackbar.vue';
+import AppNetworkErrorSnackBar from './components/layout/AppNetworkErrorSnackBar.vue';
 
 
 @Component({
   inheritAttrs: false,
   components: {
-    // AppHeader,
-    // AppSidebar,
-    // AppNotification,
-    // AppOfflineSnackbar,
-    // AppNetworkErrorSnackBar,
+    AppHeader,
+    AppSidebar,
+    AppNotification,
+    AppOfflineSnackbar,
+    AppNetworkErrorSnackBar,
   },
 })
 export default class AuroraApp extends Vue {
@@ -67,7 +63,7 @@ export default class AuroraApp extends Vue {
   }
 
   @Call('Auth/getCurrentUser')
-  callAuthGetCurrentUser!: () => Promise<boolean>;
+  callAuthGetCurrentUser!: () => Promise<any>;
 
   created () {
     EventService.on('authentication-error', (data: any) => this.$store.dispatch('Auth/signOut'));
@@ -133,10 +129,11 @@ html {
   max-height: 100vh;
 }
 
-.v-content.main {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  overflow-x: hidden;
+.v-content {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  max-height: 100vh;
 }
 
 /* Change Autocomplete styles in Chrome*/
@@ -168,127 +165,127 @@ select:-webkit-autofill:focus {
   border: none !important;
 }
 
-.theme--light {
-  &.v-application {
-    background-color: #f1f3f4 !important;
-  }
-  .v-text-field--box {
-    &:not(.v-input--is-focused) {
-      > .v-input__control > .v-input__slot {
-        &::before {
-          border-color: transparent;
-        }
-        &:hover {
-          &:before {
-            border-color: transparent;
-          }
-        }
-      }
-    }
-  }
-  .v-messages {
-    color: rgba(0,0,0,0.6);
-  }
-  .v-datatable thead th.column.sortable.active {
-    color: rgba(0,0,0,0.87);
-    font-weight: bold;
-  }
-  .v-input--is-disabled {
-    .v-label,
-    input,
-    textarea {
-      -webkit-text-fill-color: rgba(0,0,0,0.38);
-    }
-  }
-}
+// .theme--light {
+//   &.v-application {
+//     background-color: #f1f3f4 !important;
+//   }
+//   .v-text-field--box {
+//     &:not(.v-input--is-focused) {
+//       > .v-input__control > .v-input__slot {
+//         &::before {
+//           border-color: transparent;
+//         }
+//         &:hover {
+//           &:before {
+//             border-color: transparent;
+//           }
+//         }
+//       }
+//     }
+//   }
+//   .v-messages {
+//     color: rgba(0,0,0,0.6);
+//   }
+//   .v-datatable thead th.column.sortable.active {
+//     color: rgba(0,0,0,0.87);
+//     font-weight: bold;
+//   }
+//   .v-input--is-disabled {
+//     .v-label,
+//     input,
+//     textarea {
+//       -webkit-text-fill-color: rgba(0,0,0,0.38);
+//     }
+//   }
+// }
 
-.theme--dark {
-  &.v-list-item--active {
-    &::before {
-      content: none;
-    }
-  }
-}
+// .theme--dark {
+//   &.v-list-item--active {
+//     &::before {
+//       content: none;
+//     }
+//   }
+// }
 
-.v-text-field--outline {
-  .v-label--active {
-    transform: translateY(-8px) scale(0.75);
-  }
-  > .v-input__control > .v-input__slot {
-    border-width: 1px !important;
-  }
-  input {
-    padding: 8px 0 10px;
-  }
-}
+// .v-text-field--outline {
+//   .v-label--active {
+//     transform: translateY(-8px) scale(0.75);
+//   }
+//   > .v-input__control > .v-input__slot {
+//     border-width: 1px !important;
+//   }
+//   input {
+//     padding: 8px 0 10px;
+//   }
+// }
 
-.v-sheet {
-  border-radius: 4px;
-}
+// .v-sheet {
+//   border-radius: 4px;
+// }
 
-.v-textarea.v-text-field--enclosed.v-text-field--outlined textarea {
-  margin-top: 6px !important;
-  margin-bottom: 2px !important;
-}
+// .v-textarea.v-text-field--enclosed.v-text-field--outlined textarea {
+//   margin-top: 6px !important;
+//   margin-bottom: 2px !important;
+// }
 
-.v-list__tile__title,
-.v-list__tile__sub-title {
-  white-space: initial;
-}
+// .v-list__tile__title,
+// .v-list__tile__sub-title {
+//   white-space: initial;
+// }
 
-.v-select__selection--comma {
-  align-items: center;
-  display: inline-flex;
-  margin: 4px 4px 10px 0;
-}
+// .v-select__selection--comma {
+//   align-items: center;
+//   display: inline-flex;
+//   margin: 4px 4px 10px 0;
+// }
 
-.v-tabs {
-  &__item {
-    text-transform: initial;
-  }
-  &__bar {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-}
+// .v-tabs {
+//   &__item {
+//     text-transform: initial;
+//   }
+//   &__bar {
+//     border-bottom-left-radius: 0;
+//     border-bottom-right-radius: 0;
+//   }
+// }
 
-.v-dialog--fullscreen .v-card {
-  border-radius: 0;
-  border: none;
-}
+// .v-dialog--fullscreen .v-card {
+//   border-radius: 0;
+//   border: none;
+// }
 
-.v-card {
-  .v-datatable__expand-content &,
-  .v-window-item & {
-    background-color: inherit;
-  }
-}
+// .v-card {
+//   .v-datatable__expand-content &,
+//   .v-window-item & {
+//     background-color: inherit;
+//   }
+// }
 
-.v-icon--left {
-  margin-right: 6px;
-}
-.v-icon--right {
-  margin-left: 6px;
-}
-.v-btn--icon {
-  border-radius: 50%;
-}
+// .v-icon--left {
+//   margin-right: 6px;
+// }
+// .v-icon--right {
+//   margin-left: 6px;
+// }
+// .v-btn--icon {
+//   border-radius: 50%;
+// }
 
-.v-menu__content {
-  border-radius: 4px;
-}
+// .v-menu__content {
+//   border-radius: 4px;
+// }
 
-.layout {
-  &._centered {
-    width: 100%;
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 0 10px;
-  }
-  &._wide {
-    max-width: 1180px;
-  }
-}
+// .layout {
+//   &._centered {
+//     width: 100%;
+//     max-width: 960px;
+//     margin: 0 auto;
+//     padding: 0 10px;
+//   }
+//   &._wide {
+//     max-width: 1180px;
+//   }
+// }
 
 .v-application code {
   box-shadow: inherit;

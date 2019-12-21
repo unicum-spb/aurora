@@ -97,7 +97,7 @@ export default class SignUpForm extends Vue {
   }
 
   @Call('Auth/signUp') callAuthSignUp!: (payload: any) => Promise<any>;
-  @Call('Workspace/setCurrent') callWorkspaceSet!: (payload: any) => Promise<void>;
+  // @Call('Workspace/setCurrent') callWorkspaceSet!: (payload: any) => Promise<void>;
 
   async signUp () {
     // @ts-ignore
@@ -107,7 +107,7 @@ export default class SignUpForm extends Vue {
     if (isValid) {
       const createdWorkspace = await this.callAuthSignUp(user);
       if (createdWorkspace) {
-        this.callWorkspaceSet(createdWorkspace);
+        // this.callWorkspaceSet(createdWorkspace);
 
         this.$router.push({
           name: 'Auth/login',

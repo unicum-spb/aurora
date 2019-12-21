@@ -4,8 +4,9 @@ import Wrapper from '@/views/home/wrapper.vue';
 import Home from '@/views/home/index.vue';
 
 import auth from './auth';
+import reports from './reports';
 
-const routes: RouteConfig[] = [
+const routes: Array<RouteConfig> = [
   {
     path: '/',
     component: Wrapper,
@@ -21,12 +22,13 @@ const routes: RouteConfig[] = [
   },
 
   ...auth,
+  ...reports,
 
   {
     path: '*',
     beforeEnter (to: Route, from: Route, next: Function) {
       const dest = {
-        name: 'Workspace/all',
+        name: 'Home',
       };
       return next(dest);
     },

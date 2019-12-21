@@ -1,33 +1,66 @@
-﻿export interface User {
-  id?: string;
-  email: string;
-  password: string;
-  firstName?: string;
-  lastName?: string;
+﻿export interface ShoppingCartItem {
+  productId?: string;
+  quantity?: number;
+  price?: number;
 }
 
-export interface Body {
-  email: string;
-  password: string;
+export interface ShoppingCart {
+  userId?: string;
+  items?: ShoppingCartItem[];
 }
 
-export interface Anonymous {
-  token?: string;
+export interface PhysiqueModel {
+  weight: number;
+  height: number;
 }
 
-export interface Anonymous2 {
-  greeting?: string;
-  date?: string;
-  url?: string;
-  headers?: Headers;
+export interface ReportMetaDataModel {
+  name: string;
+  sex: string;
+  age: number;
+  physique: PhysiqueModel;
+  date: string;
 }
 
-export interface Anonymous3 {
+export interface ReportFieldModel {
+  title: string;
+  min: number;
+  max: any;
+  value: number;
+}
+
+export interface ReportResultModel {
+  title: string;
+  fields: ReportFieldModel[];
+}
+
+export interface QuantumReportModel {
   id: string;
-  email?: string;
-  name?: string;
+  userId: string;
+  meta: ReportMetaDataModel;
+  reports: ReportResultModel[];
 }
 
-export interface Headers {
-  'Content-Type'?: string;
+export interface User {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+}
+
+/** (Schema options: { title: 'NewUser' }) */
+export interface NewUser {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+}
+
+export interface NewUserRequest {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
 }

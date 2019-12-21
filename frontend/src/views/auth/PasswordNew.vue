@@ -135,7 +135,7 @@ export default class RecoverPassword extends Vue {
   metaInfo () {
     return {
       title: this.$t('titles.auth.password_new'),
-      titleTemplate: `%s | ${this.$t('aplaut')}`
+      titleTemplate: `%s | ${this.$t('aurora')}`
     };
   }
 }

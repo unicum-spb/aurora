@@ -79,7 +79,7 @@ export default class SignUp extends Vue {
   metaInfo () {
     return {
       title: this.$t('titles.auth.sign_up'),
-      titleTemplate: `%s | ${this.$t('aplaut')}`
+      titleTemplate: `%s | ${this.$t('aurora')}`
     };
   }
 }

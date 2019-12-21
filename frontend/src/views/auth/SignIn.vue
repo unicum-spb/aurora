@@ -103,7 +103,7 @@ export default class SignIn extends Vue {
   metaInfo () {
     return {
       title: this.$t('titles.auth.sign_in'),
-      titleTemplate: `%s | ${this.$t('aplaut')}`
+      titleTemplate: `%s | ${this.$t('aurora')}`
     };
   }
 }

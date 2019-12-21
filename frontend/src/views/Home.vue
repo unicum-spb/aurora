@@ -33,16 +33,16 @@ import { Vue, Component } from 'vue-property-decorator';
 import { Call } from 'vuex-pathify';
 
 import Axios from 'axios';
-import { TypeQuantumReportModel } from '@/types';
+import { QuantumReportModel } from '@/types/api';
 
 
 @Component({ inheritAttrs: false })
 export default class Home extends Vue {
   get reports () {
-    return this.$store.state.Reports.reports;
+    return this.$store.state.Reports.list;
   }
 
-  @Call('Reports/create') callReportsCreate!: (payload: FormData) => Promise<TypeQuantumReportModel>;
+  @Call('Reports/create') callReportsCreate!: (payload: FormData) => Promise<QuantumReportModel>;
 
   async onSubmit ({ files }: HTMLInputElement) {
     console.log({ files });

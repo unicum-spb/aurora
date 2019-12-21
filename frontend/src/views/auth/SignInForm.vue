@@ -115,14 +115,12 @@ export default class SignInForm extends Vue {
         this.resetForm();
 
         if (confirm.length) {
-          return this.$router.push({
-            name: 'Workspace/all',
-          });
+          return this.$router.push({ name: 'Home' });
         }
 
         if (redirect) return this.$router.push(redirect);
 
-        if (!inApp) return this.$router.push({ name: 'Workspace/all' });
+        if (!inApp) return this.$router.push({ name: 'Home' });
       } else {
         this.user.password = '';
       }

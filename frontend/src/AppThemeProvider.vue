@@ -1,10 +1,15 @@
 <template>
-  <v-switch
-    v-model="computedTheme"
-    :disabled="disabled"
-    primary
-    label="Dark"
-  />
+  <v-list-item
+    @click.exact="computedTheme = !computedTheme"
+  >
+    <v-list-item-action>
+      <v-icon>{{ computedTheme ? 'brightness_4' : 'brightness_low' }}</v-icon>
+    </v-list-item-action>
+
+    <v-list-item-title>
+      {{ computedTheme ? 'light_mode' : 'dark_mode' }}
+    </v-list-item-title>
+  </v-list-item>
 </template>
 
 <script lang="ts">
@@ -12,6 +17,7 @@
 
 import { Vue, Component, Watch } from 'vue-property-decorator';
 
+import { Sync } from 'vuex-pathify';
 import EventService from '@/services/event';
 
 import { ColorSchemes } from '@/types/enums';
@@ -34,16 +40,16 @@ const themeColor = document.querySelector('meta[name="theme-color"]');
 const darkCSS = document.querySelectorAll(`${LINK_REL_STYLESHEET}[${MEDIA}*=${PREFERS_COLOR_SCHEME}][${MEDIA}*="${DARK}"]`);
 const lightCSS = document.querySelectorAll(`${LINK_REL_STYLESHEET}[${MEDIA}*=${PREFERS_COLOR_SCHEME}][${MEDIA}*="${LIGHT}"],${LINK_REL_STYLESHEET}[${MEDIA}*=${PREFERS_COLOR_SCHEME}][${MEDIA}*="${NO_PREFERENCE}"]`);
 
-@Component({})
-export default class ThemeProvider extends Vue {
-  private theme: ColorSchemes;
+@Component({ inheritAttrs: false })
+export default class AppThemeProvider extends Vue {
   private disabled: boolean;
 
   constructor () {
     super();
-    this.theme = DARK;
     this.disabled = false;
   }
+
+  @Sync('Interface/theme') theme!: ColorSchemes;
 
   get computedTheme () {
     return this.theme === DARK;
@@ -107,7 +113,7 @@ export default class ThemeProvider extends Vue {
       ? DARK
       : LIGHT;
 
-    const toggleTheme = (event: any) => {
+    const toggleTheme = (event: MediaQueryListEvent) => {
       const darkModeOn = event.matches;
       this.computedTheme = darkModeOn;
       // @ts-ignore

@@ -1,14 +1,26 @@
+import { RouterOptions } from 'vue-router/types';
+
 import Vue from 'vue';
-import VueRouter from 'vue-router';
+import Router from 'vue-router';
 
 import routes from './routes';
 
-Vue.use(VueRouter);
+import { checkAuth } from './guards';
+import { parseQuery } from './query';
+import scrollBehavior from './scrollBehavior';
 
-const router = new VueRouter({
+Vue.use(Router);
+
+const options: RouterOptions = {
   mode: 'history',
   base: process.env.BASE_URL,
   routes,
-});
+  parseQuery,
+  scrollBehavior,
+};
+
+const router = new Router(options);
+
+router.beforeEach(checkAuth);
 
 export default router;

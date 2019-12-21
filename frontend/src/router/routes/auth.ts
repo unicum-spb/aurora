@@ -12,17 +12,17 @@ import SignOut from '@/views/auth/SignOut.vue';
 
 import Auth from '@/views/auth/index.vue';
 
-const nameSpace = createNameSpace('Auth');
+export const nameSpace = createNameSpace('Auth');
 
 
-const routes: RouteConfig[] = [
+const routes: Array<RouteConfig> = [
   {
     path: '/auth',
     component: Wrapper,
     beforeEnter (to, from, next) {
       if (to.name !== 'Auth/signOut' && StorageService.contains('token')) {
         const dest = {
-          name: 'Workspace/all',
+          name: 'Home',
         };
         return next(dest);
       }

@@ -77,15 +77,15 @@ const actions: ActionTree<RootState['Auth'], RootState> = {
     const key = 'signUp';
 
     commit('SET_PENDING', { key });
-    const { user, workspace, errors } = await AuthProvider.signUp(payload);
+    const { user, errors } = await AuthProvider.signUp(payload);
     commit('SET_PENDING', { key, value: false });
 
     if (errors && errors.length) {
       commit('SET_ERRORS', { key, errors });
       return false;
-    } if (workspace) {
+    } if (user) {
       commit('SET_AUTH_DATA', { user });
-      return workspace;
+      return user;
     }
     return false;
   },
@@ -136,7 +136,10 @@ const mutations: MutationTree<RootState['Auth']> = {
   },
 
   SIGN_OUT (state) {
-    state.user = {};
+    state.user = {
+      id: '',
+      email: ''
+    };
     state.token = null;
     StorageService.remove('token');
     SessionStorage.clear();

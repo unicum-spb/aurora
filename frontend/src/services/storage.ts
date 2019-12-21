@@ -76,9 +76,7 @@ class Storage {
   }
 
   private fire (listener: Function, event: StorageEvent): void {
-    const {
-      key, newValue, oldValue, url, uri
-    } = event;
+    const { key, newValue, oldValue, url, uri } = event;
     const isPrevKey = this.prevKey === key;
     const isPrevValue = this.prevValue === newValue;
 

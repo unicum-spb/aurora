@@ -4,8 +4,8 @@ import { Pending } from '../shared.d';
 export type Token = string | null;
 
 export type User = {
-  email?: string;
-  id?: string;
+  id: string;
+  email: string;
 }
 
 export interface AuthState {
