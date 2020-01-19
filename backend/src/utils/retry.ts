@@ -1,14 +1,15 @@
-import { Scalars } from '@/types';
+// Copyright IBM Corp. 2018. All Rights Reserved.
+// Node module: loopback4-example-shopping
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
 
-import { HttpErrors } from '@loopback/rest';
-
-import { promisify } from 'util';
+import {HttpErrors} from '@loopback/rest';
+import {promisify} from 'util';
 import debugFactory from 'debug';
-
 const debug = debugFactory('loopback:example:shopping');
 
 export interface TaskStatus<T> {
-  done: Scalars['Boolean'];
+  done: boolean;
   value?: T | null;
 }
 
@@ -17,7 +18,7 @@ export interface TaskStatus<T> {
  */
 export interface Task<T> {
   run(): Promise<TaskStatus<T>>;
-  description: Scalars['String'];
+  description: string;
 }
 
 /**
@@ -27,11 +28,11 @@ export interface RetryOptions {
   /**
    * Maximum number of tries including the first run.
    */
-  maxTries?: Scalars['Number'];
+  maxTries?: number;
   /**
    * Milliseconds to wait after each try
    */
-  interval?: Scalars['Number'];
+  interval?: number;
 }
 
 /**
@@ -43,7 +44,7 @@ export interface RetryOptions {
  */
 export async function retry<T>(
   task: Task<T>,
-  { maxTries = 10, interval = 100 }: RetryOptions = {},
+  {maxTries = 10, interval = 100}: RetryOptions = {},
 ): Promise<T> {
   if (maxTries < 1) maxTries = 1;
   let triesLeft = maxTries;

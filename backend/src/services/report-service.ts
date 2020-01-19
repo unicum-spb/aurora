@@ -13,10 +13,10 @@ import { Processor } from '../processors/quantum';
 
 export interface ReportService<F, R> {
   verifyFiles(files: F): boolean;
-  createReport(files: F): Promise<R>;
+  createReports(files: F): Promise<R>;
 }
 
-export class MyReportService implements ReportService<Array<Express.Multer.File>, Array<TypeQuantumReportModel>> {
+export class MyReportService implements ReportService<Array<Express.Multer.File>, Array<Omit<TypeQuantumReportModel, 'id'>>> {
   constructor(
     @repository(ReportRepository) public reportRepository: ReportRepository,
     @inject(PasswordHasherBindings.PASSWORD_HASHER)
@@ -30,8 +30,8 @@ export class MyReportService implements ReportService<Array<Express.Multer.File>
     return true;
   }
 
-  async createReport(files: Array<Express.Multer.File>): Promise<Array<TypeQuantumReportModel>> {
-    const reports: Array<TypeQuantumReportModel> = [];
+  async createReports(files: Array<Express.Multer.File>): Promise<Array<Omit<TypeQuantumReportModel, 'id'>>> {
+    const reports: Array<Omit<TypeQuantumReportModel, 'id'>> = [];
 
     for (const file of files) {
       const processor = new Processor(file);
@@ -40,7 +40,7 @@ export class MyReportService implements ReportService<Array<Express.Multer.File>
       await processor.extractFiles();
       const result = processor.buildReports();
 
-      reports.push(result);
+      reports.push(result)
     }
 
     return reports.sort((prev, next) => {

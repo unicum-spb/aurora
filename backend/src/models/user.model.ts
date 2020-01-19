@@ -1,6 +1,8 @@
+import { Entity, model, property, hasMany, hasOne } from '@loopback/repository';
+// import { Order } from './order.model';
+import { UserCredentials } from './user-credentials.model';
+import { QuantumReportModel } from './report.model';
 import { Scalars } from '@/types';
-
-import { Entity, model, property } from '@loopback/repository';
 
 @model({
   settings: {
@@ -17,20 +19,30 @@ import { Entity, model, property } from '@loopback/repository';
   },
 })
 export class User extends Entity {
-  @property({ type: 'string', id: true })
+  @property({
+    id: true,
+    type: 'string',
+    mongodb: { dataType: 'ObjectID' }
+  })
   id: Scalars['String'];
 
-  @property({ type: 'string', required: true })
+  @property({ type: 'string' })
   email: Scalars['String'];
 
-  @property({ type: 'string', required: true })
-  password: Scalars['String'];
+  @property({ type: 'string' })
+  firstName: Scalars['String'];
 
   @property({ type: 'string' })
-  firstName?: Scalars['String'];
+  lastName: Scalars['String'];
 
-  @property({ type: 'string' })
-  lastName?: Scalars['String'];
+  @hasMany(() => QuantumReportModel)
+  reports: Array<QuantumReportModel>;
+
+  @hasMany(() => User)
+  watchers: Array<User>;
+
+  @hasOne(() => UserCredentials)
+  userCredentials: UserCredentials;
 
   constructor(data?: Partial<User>) {
     super(data);

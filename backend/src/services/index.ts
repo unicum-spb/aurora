@@ -3,6 +3,8 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-export * from './user.repository';
-export * from './user-credentials.repository';
-export * from './report.repository';
+export * from './report-service';
+export * from './user-service';
+export * from './jwt-service';
+// export * from './recommender-rest.service';
+// export * from './recommender-grpc.service';

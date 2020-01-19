@@ -1,54 +1,38 @@
-import { Scalars } from './types';
-
-import * as path from 'path';
-
 import { BootMixin } from '@loopback/boot';
 import { ApplicationConfig, BindingKey } from '@loopback/core';
 import { RepositoryMixin } from '@loopback/repository';
 import { RestApplication } from '@loopback/rest';
 import { ServiceMixin } from '@loopback/service-proxy';
-
-import {
-  RestExplorerBindings,
-  RestExplorerComponent,
-} from '@loopback/rest-explorer';
-
-import {
-  AuthenticationComponent,
-  registerAuthenticationStrategy,
-} from '@loopback/authentication';
-
 import { MyAuthenticationSequence } from './sequence';
-
-import {
-  TokenServiceBindings,
-  UserServiceBindings,
-  TokenServiceConstants,
-  ReportServiceBindings,
-} from './keys';
+import { RestExplorerBindings, RestExplorerComponent, } from '@loopback/rest-explorer';
+import { TokenServiceBindings, UserServiceBindings, TokenServiceConstants, ReportServiceBindings, } from './keys';
 import { JWTService } from './services/jwt-service';
-import { MyUserService } from './services/user-service';
+
+import { MyReportService, MyUserService } from './services';
+
+import path from 'path';
+import { AuthenticationComponent, registerAuthenticationStrategy, } from '@loopback/authentication';
 import { PasswordHasherBindings } from './keys';
 import { BcryptHasher } from './services/hash.password.bcryptjs';
-import { JWTAuthenticationStrategy } from './authentication-strategies/jwt';
+import { JWTAuthenticationStrategy } from './authentication-strategies/jwt-strategy';
 import { SECURITY_SCHEME_SPEC } from './utils/security-spec';
-
-import { MyReportService } from './services/report-service';
+import { AuthorizationComponent, AuthorizationTags, } from '@loopback/authorization';
+import { createEnforcer } from './services/enforcer';
+import { CasbinAuthorizationProvider } from './services/authorizor';
 
 /**
  * Information from package.json
  */
 export interface PackageInfo {
-  name: Scalars['String'];
-  version: Scalars['String'];
-  description: Scalars['String'];
+  name: string;
+  version: string;
+  description: string;
 }
-
 export const PackageKey = BindingKey.create<PackageInfo>('application.package');
 
 const pkg: PackageInfo = require('../package.json');
 
-export class AuroraApplication extends BootMixin(
+export class ShoppingApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
 ) {
   constructor(options?: ApplicationConfig) {
@@ -71,7 +55,15 @@ export class AuroraApplication extends BootMixin(
 
     // Bind authentication component related elements
     this.component(AuthenticationComponent);
+    this.component(AuthorizationComponent);
 
+    // authorization
+    this.bind('casbin.enforcer').toDynamicValue(createEnforcer);
+    this.bind('authorizationProviders.casbin-provider')
+      .toProvider(CasbinAuthorizationProvider)
+      .tag(AuthorizationTags.AUTHORIZER);
+
+    // authentication
     registerAuthenticationStrategy(this, JWTAuthenticationStrategy);
 
     // Set up the custom sequence

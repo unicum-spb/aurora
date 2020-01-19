@@ -1,12 +1,10 @@
-import { Scalars } from '@/types';
+import { ShoppingApplication } from './application';
 
-import { AuroraApplication } from './application';
-
-export async function migrate(args: Array<Scalars['String']>) {
+export async function migrate(args: string[]) {
   const existingSchema = args.includes('--rebuild') ? 'drop' : 'alter';
-  console.log('Migrating schemas (%s existing schema) - ', existingSchema);
+  console.log('Migrating schemas (%s existing schema)', existingSchema);
 
-  const app = new AuroraApplication();
+  const app = new ShoppingApplication();
   await app.boot();
   await app.migrateSchema({ existingSchema });
 
@@ -16,10 +14,7 @@ export async function migrate(args: Array<Scalars['String']>) {
   process.exit(0);
 }
 
-
-try {
-  migrate(process.argv);
-} catch (error) {
-  console.error('Cannot migrate database schema - ', error);
+migrate(process.argv).catch(err => {
+  console.error('Cannot migrate database schema \n', err);
   process.exit(1);
-}
+});

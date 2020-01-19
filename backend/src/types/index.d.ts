@@ -21,12 +21,12 @@ export type PendingObject = {
 
 export type Sex = 'male' | 'female';
 
-export type Physique = {
+export interface Physique {
   weight: Scalars['Number'];
   height: Scalars['Number'];
 }
 
-export type ReportMeta = {
+export interface ReportMeta {
   name: Scalars['String'];
   sex: Sex;
   age: Scalars['Number'];
@@ -34,20 +34,21 @@ export type ReportMeta = {
   date: Scalars['String'];
 }
 
-export type ReportField = {
+export interface ReportField {
   title: Scalars['String'];
   min: Scalars['Number'];
   max: Scalars['Number'];
   value: Scalars['Number'];
+  relative?: Scalars['String'];
 }
 
-export type ReportResult = {
+export interface ReportResult {
   title: Scalars['String'];
   fields: Array<ReportField>;
 };
 
 export interface TypeQuantumReportModel {
-  id?: Scalars['String'];
+  id: Scalars['String'];
   meta: ReportMeta;
   reports: Array<ReportResult>;
 };

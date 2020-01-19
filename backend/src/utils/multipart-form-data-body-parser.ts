@@ -11,13 +11,13 @@ export const FORM_DATA = 'multipart/form-data';
 export class MultipartFormDataBodyParser implements BodyParser {
   name = FORM_DATA;
 
-  supports (mediaType: Scalars['String']) {
+  supports(mediaType: Scalars['String']) {
     // The mediaType can be
     // `multipart/form-data; boundary=--------------------------979177593423179356726653`
     return mediaType.startsWith(FORM_DATA);
   }
 
-  async parse (request: Request): Promise<RequestBody> {
+  async parse(request: Request): Promise<RequestBody> {
     const storage = multer.diskStorage({
       destination: (req, file, cb) => cb(null, EnvironmentServiceConstants.UPLOAD_PATH),
       filename: (req, file, cb) => cb(null, file.originalname.replace(/ /gi, '_')),
@@ -36,7 +36,7 @@ export class MultipartFormDataBodyParser implements BodyParser {
             error: 'request.files in not an array'
           });
         }
-        
+
       });
     });
   }

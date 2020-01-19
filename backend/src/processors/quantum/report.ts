@@ -1,31 +1,31 @@
-import { ReportMeta, Scalars, ReportField } from '@/types';
+import { ReportMeta, Scalars, ReportField } from '@/types'
 
-import { load } from 'cheerio';
+import _$, { load } from 'cheerio'
 
-import { parse, HTMLElement } from 'node-html-parser';
-
-import * as utils from './utils';
+import * as utils from './utils'
+import { Sex } from '../../types/enums'
 
 
 export class Report {
-  private source: Scalars['String'];
-  private structure: Array<Scalars['String']>;
-  private data: Array<Array<Scalars['String']>>;
+  // private source: Scalars['String']
+  private structure: Array<Scalars['String']>
+  private data: Array<Array<Scalars['String']>>
 
-  protected title: Scalars['String'];
-  protected result: Array<ReportField>;
-  protected meta: ReportMeta;
+  protected title: Scalars['String']
+  protected result: Array<ReportField>
+  protected meta: ReportMeta
+  protected columnsInRowQuantity: Scalars['Number']
 
-  protected $: CheerioStatic;
+  protected $: CheerioStatic
 
   constructor(document: string) {
-    this.source = document;
-    this.$ = load(document);
-    this.structure = [];
-    this.data = [];
+    // this.source = document
+    this.$ = load(document)
+    this.structure = []
+    this.data = []
 
-    this.title = '';
-    this.result = [];
+    this.title = ''
+    this.result = []
     this.meta = {
       name: '',
       age: 0,
@@ -34,116 +34,140 @@ export class Report {
         weight: 0,
         height: 0,
       },
-      sex: 'male'
-    };
+      sex: Sex.Male,
+    }
+
+    this.columnsInRowQuantity = 4;
+  }
+
+  getTitle() {
+    return this.title;
   }
 
   getResult() {
-    const { title, result } = this;
+    const { title, result } = this
 
     return {
       title,
       fields: result,
-    };
+    }
   }
 
   getMetaData() {
-    return this.meta;
+    return this.meta
   }
 
   createStructure() {
-    const parsed = parse(this.source) as HTMLElement;
+    this.$('tr.td > td.td').each((index, el) => {
+      const $align = _$(el).attr('align')
+      if ($align?.match('middle')) {
+        const text = _$(el).text()
+        const image = _$(el).find('img').attr('src')
+        if (text.length) {
+          this.structure.push(text)
+        }
+        if (image?.length) {
+          this.structure.push(image)
+        }
+      }
+    })
 
-    const src = parsed.querySelectorAll('.td');
-
-    for (const { structuredText } of src) {
-      this.structure.push(structuredText);
-    }
-
-    this.structure.splice(0, 1);
-
-    return this;
+    return this
   }
 
   createData() {
-    const preresult: Array<Scalars['String']> = [];
+    const preResult: Array<Scalars['String']> = []
 
     this.structure.forEach(val => {
-      if (preresult.length === 3) {
-        this.data.push([...preresult]);
-        preresult.splice(0, preresult.length);
+      if (preResult.length === this.columnsInRowQuantity) {
+        this.data.push([...preResult])
+        preResult.splice(0, preResult.length)
       }
 
-      preresult.push(val);
-    });
+      preResult.push(val)
+    })
 
-    if (preresult.length) {
-      this.data.push([...preresult]);
-      preresult.splice(0, preresult.length);
+    if (preResult.length) {
+      this.data.push([...preResult])
+      preResult.length = 0
     }
 
-    return this;
+    return this
   }
 
   convertToJSON() {
     this.data.forEach(arr => {
+      if (this.title === 'Состояние костей') {
+        console.log(arr)
+        return
+      }
+
       if (arr[1] && arr[1].split('-')[0] && arr[1].split('-')[1]) {
 
-        const [title, range, value] = arr;
+        const [title, range, value, relative] = arr
+
+        const [firstInRange, lastInRange] = range.split('-')
 
         const result: ReportField = {
           title,
-          min: utils.normalizeNumber(range.split('-')[0]),
-          max: utils.normalizeNumber(range.split('-')[1]),
+          min: utils.normalizeNumber(firstInRange),
+          max: utils.normalizeNumber(lastInRange),
           value: utils.normalizeNumber(value),
-        };
+          relative: relative.slice(0, relative.length - 4), // 4 - длина расширения с точкой
+        }
 
-        this.result.push(result);
+        this.result.push(result)
       }
-    });
+    })
 
-    return this;
+    return this
   }
 
   extractTitle() {
-    const { $ } = this;
+    const { $ } = this
 
-    const $el = $('table:nth-child(1) font');
+    const $el = $('table:nth-child(1) font')
 
-    const src = $el.text().split('(')[1];
-    this.title = src.substr(0, src.length - 1); // выпиливает скобочку справа в названии
+    const src = $el.text().split('(')[1]
+    const title = src.substr(0, src.length - 1) // выпиливает скобочку справа в названии
 
-    return this;
+    if (title === 'Состояние костей') {
+      this.columnsInRowQuantity = 3
+    }
+    this.title = title;
+
+    return this
   }
 
   extractMetaInformation() {
-    const { $ } = this;
+    const { $ } = this
 
-    const $el = $('table:nth-child(2) > tbody > tr td');
+    const $el = $('table:nth-child(2) > tbody > tr td')
 
-    const metaArray = [];
+    const metaArray = []
 
     for (const key in $el) {
       if ($el[key]) {
-        const { type, name, children } = $el[key];
+        const { type, name, children } = $el[key]
 
         if (type === 'tag' && name === 'td') {
-          if (children && children[0].data && children[0].type === 'text') {
-            metaArray.push(children[0].data.split(': ')[1]);
+          if (children?.[0].data && children[0].type === 'text') {
+            metaArray.push(children[0].data.split(': ')[1])
           }
         }
       }
     }
 
+    const [name, sex, age, physique, date] = metaArray
+
     this.meta = {
-      name: metaArray[0],
-      sex: utils.parseSex(metaArray[1]),
-      age: utils.parseAge(metaArray[2]),
-      physique: utils.parsePhysique(metaArray[3]),
-      date: utils.parseDate(metaArray[4]),
-    };
+      name,
+      sex: utils.parseSex(sex),
+      age: utils.parseAge(age),
+      physique: utils.parsePhysique(physique),
+      date: utils.parseDate(date),
+    }
 
-    return this;
+    return this
   }
-
 }

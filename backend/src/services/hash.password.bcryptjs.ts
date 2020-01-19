@@ -1,47 +1,51 @@
-import { Scalars } from '@/types';
+// Copyright IBM Corp. 2019. All Rights Reserved.
+// Node module: loopback4-example-shopping
+// This file is licensed under the MIT License.
+// License text available at https://opensource.org/licenses/MIT
 
-import { genSalt, hash, compare } from 'bcryptjs';
+import { genSalt, hash } from 'bcryptjs';
+import { compare } from 'bcryptjs';
 import { inject } from '@loopback/core';
 import { PasswordHasherBindings } from '../keys';
 
 /**
  * Service HashPassword using module 'bcryptjs'.
  * It takes in a plain password, generates a salt with given
- * round and returns the hashed password as a Scalars['String']
+ * round and returns the hashed password as a string
  */
 export type HashPassword = (
-  password: Scalars['String'],
-  rounds: Scalars['Number'],
-) => Promise<Scalars['String']>;
+  password: string,
+  rounds: number,
+) => Promise<string>;
 // bind function to `services.bcryptjs.HashPassword`
 export async function hashPassword(
-  password: Scalars['String'],
-  rounds: Scalars['Number'],
-): Promise<Scalars['String']> {
+  password: string,
+  rounds: number,
+): Promise<string> {
   const salt = await genSalt(rounds);
   return hash(password, salt);
 }
 
-export interface PasswordHasher<T = Scalars['String']> {
+export interface PasswordHasher<T = string> {
   hashPassword(password: T): Promise<T>;
-  comparePassword(providedPass: T, storedPass: T): Promise<Scalars['Boolean']>;
+  comparePassword(providedPass: T, storedPass: T): Promise<boolean>;
 }
 
-export class BcryptHasher implements PasswordHasher<Scalars['String']> {
+export class BcryptHasher implements PasswordHasher<string> {
   constructor(
     @inject(PasswordHasherBindings.ROUNDS)
-    private readonly rounds: Scalars['Number'],
+    private readonly rounds: number,
   ) { }
 
-  async hashPassword(password: Scalars['String']): Promise<Scalars['String']> {
+  async hashPassword(password: string): Promise<string> {
     const salt = await genSalt(this.rounds);
     return hash(password, salt);
   }
 
   async comparePassword(
-    providedPass: Scalars['String'],
-    storedPass: Scalars['String'],
-  ): Promise<Scalars['Boolean']> {
+    providedPass: string,
+    storedPass: string,
+  ): Promise<boolean> {
     const passwordIsMatched = await compare(providedPass, storedPass);
     return passwordIsMatched;
   }

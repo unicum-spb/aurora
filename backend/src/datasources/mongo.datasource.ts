@@ -1,18 +1,7 @@
 import { inject, lifeCycleObserver, ValueOrPromise } from '@loopback/core';
 import { juggler, AnyObject } from '@loopback/repository';
 
-const config = {
-  name: 'mongo',
-  connector: 'mongodb',
-  url: '',
-  host: '127.0.0.1',
-  port: 27017,
-  user: '',
-  password: '',
-  database: '',
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-};
+const config = require('./mongo.datasource.config.json');
 
 function updateConfig(dsConfig: AnyObject) {
   if (process.env.KUBERNETES_SERVICE_HOST) {
@@ -37,7 +26,7 @@ export class MongoDataSource extends juggler.DataSource {
    * Disconnect the datasource when application is stopped. This allows the
    * application to be shut down gracefully.
    */
-  stop (): ValueOrPromise<void> {
+  stop(): ValueOrPromise<void> {
     return super.disconnect();
   }
 }

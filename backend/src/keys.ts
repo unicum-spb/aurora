@@ -1,16 +1,11 @@
-// Copyright IBM Corp. 2019. All Rights Reserved.
-// Node module: loopback4-example-shopping
-// This file is licensed under the MIT License.
-// License text available at https://opensource.org/licenses/MIT
-
 import { BindingKey } from '@loopback/context';
 import { TokenService, UserService } from '@loopback/authentication';
 
 import { PasswordHasher } from './services/hash.password.bcryptjs';
-import { ReportService } from './services/report-service';
+import { ReportService } from './services';
 
-import { User, QuantumReportModel } from './models';
-import { UserCredentials, QuantumReportCredentials } from './repositories';
+import { User } from './models';
+import { Credentials } from './repositories';
 import { TypeQuantumReportModel } from './types';
 
 export namespace EnvironmentServiceConstants {
@@ -25,32 +20,20 @@ export namespace TokenServiceConstants {
 }
 
 export namespace TokenServiceBindings {
-  export const TOKEN_SECRET = BindingKey.create<string>(
-    'authentication.jwt.secret',
-  );
-  export const TOKEN_EXPIRES_IN = BindingKey.create<string>(
-    'authentication.jwt.expires.in.seconds',
-  );
-  export const TOKEN_SERVICE = BindingKey.create<TokenService>(
-    'services.authentication.jwt.tokenservice',
-  );
+  export const TOKEN_SECRET = BindingKey.create<string>('authentication.jwt.secret');
+  export const TOKEN_EXPIRES_IN = BindingKey.create<string>('authentication.jwt.expires.in.seconds');
+  export const TOKEN_SERVICE = BindingKey.create<TokenService>('services.authentication.jwt.tokenservice');
 }
 
 export namespace PasswordHasherBindings {
-  export const PASSWORD_HASHER = BindingKey.create<PasswordHasher>(
-    'services.hasher',
-  );
+  export const PASSWORD_HASHER = BindingKey.create<PasswordHasher>('services.hasher');
   export const ROUNDS = BindingKey.create<number>('services.hasher.round');
 }
 
 export namespace UserServiceBindings {
-  export const USER_SERVICE = BindingKey.create<UserService<User, UserCredentials>>(
-    'services.user.service',
-  );
+  export const USER_SERVICE = BindingKey.create<UserService<User, Credentials>>('services.user.service');
 }
 
 export namespace ReportServiceBindings {
-  export const REPORT_SERVICE = BindingKey.create<ReportService<Array<Express.Multer.File>, Array<TypeQuantumReportModel>>>(
-    'services.report.service',
-  );
+  export const REPORT_SERVICE = BindingKey.create<ReportService<Array<Express.Multer.File>, Omit<TypeQuantumReportModel, 'id'>[]>>('services.report.service');
 }
