@@ -13,8 +13,6 @@ declare module 'vue/types/options' {
 
 declare module 'vue/types/vue' {
   interface Vue {
-    $notify: (payload: Notification) => Promise<NotificationEvent>
-    $alert: (payload: AlertEvent) => Promise<Alert>
     $console: Console | void;
     isProduction: boolean;
     isDark: boolean;

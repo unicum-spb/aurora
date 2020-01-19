@@ -1,16 +1,15 @@
+import { Scalars } from '@/types';
+
 export interface AlertEvent {
-  title: string;
-  message: string;
-  fullscreen?: boolean;
-  cancellable?: boolean;
+  title: Scalars['String'];
+  message: Scalars['String'];
+  fullscreen?: Scalars['Boolean'];
+  cancellable?: Scalars['Boolean'];
+  destination?: Scalars['String'];
 }
 
-export interface Alert {
-  id: string;
-  title: string;
-  message: string;
-  fullscreen?: boolean;
-  cancellable?: boolean;
+export interface Alert extends AlertEvent {
+  id: Scalars['String'];
   resolve?: Function;
   reject?: Function;
 }

@@ -6,9 +6,14 @@ import { StorageService } from '@/services/storage';
 import EnvironmentService from '@/services/environment';
 import EventService from '@/services/event';
 
+export const GET = 'get';
+export const REMOVE = 'remove';
+export const POST = 'post';
+export const PUT = 'put';
+export const PATCH = 'patch';
+
 function transformRequestConfig (config: AxiosRequestConfig) {
   const token: string = StorageService.get('token');
-  console.log(token);
 
   if (token) {
     config.headers = {
@@ -30,12 +35,12 @@ function transformResponseConfig (response: AxiosResponse) {
 
 function transformResponseError (error: any) {
   if (error) {
-    if (error.response.status === 401) {
+    if (error.response.status === 401 && !error.config.url.includes('/users/login')) {
       EventService.emit('authentication-error', error.response.data.error);
     }
     if (error.response) {
       console.error('RESPONSE error -', error.response);
-      throw error.response;
+      throw error.response.data.error;
     }
     throw error;
   } else {

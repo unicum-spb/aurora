@@ -1,6 +1,7 @@
-import { EChartOption } from 'echarts';
+import { ReportFieldModel, ReportMetaDataModel } from '@/types/api';
 
 export type Maybe<T> = T | null;
+
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string
@@ -19,13 +20,9 @@ export type Pending = boolean
 export type Sex = 'male' | 'female'
 
 export interface ComparedQuantumReportModel {
-  xAxis: {
-    name: Scalars['String']
-    data: EChartOption.SeriesLine['data']
-  }
-  yAxis: {
-    name: Scalars['String']
-    data: EChartOption.SeriesLine['data']
-  }
-  title: Scalars['String']
+  title: ReportFieldModel['title'],
+  dates: Array<ReportMetaDataModel['date']>
+  value: Array<ReportFieldModel['value']>
+  min: Array<ReportFieldModel['min']>
+  max: Array<ReportFieldModel['max']>
 }

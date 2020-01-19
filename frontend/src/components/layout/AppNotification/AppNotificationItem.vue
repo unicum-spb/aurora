@@ -20,18 +20,21 @@
 
 import { Vue, Component, Prop } from 'vue-property-decorator';
 
-import { JSON } from '@/types/shared.d';
-import { NotificationEvent } from '@/types/notify.d';
+import { Dictionary } from '@/types';
+import { Notification } from '@/types/notify.d';
 
 
 @Component({ inheritAttrs: false })
 export default class AppNotificationItem extends Vue {
-  @Prop({ required: true }) item!: NotificationEvent;
-  @Prop({ default: 0 }) index!: number;
+  @Prop({ required: true })
+  public item!: Notification;
 
-  calculatedStyle: JSON = {};
+  @Prop({ default: 0 })
+  public index!: number;
 
-  get attrs (): JSON {
+  public calculatedStyle: Dictionary<any> = {};
+
+  get attrs (): Dictionary<any> {
     const { id, type, timeout, positionX, positionY } = this.item;
     return {
       value: id,
@@ -70,7 +73,7 @@ export default class AppNotificationItem extends Vue {
     } = this.item;
 
     if (resolve) resolve(notification);
-    this.$emit('on-close');
+    this.$emit('close');
   }
 }
 

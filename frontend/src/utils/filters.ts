@@ -10,40 +10,72 @@ import { Dictionary } from '@/types';
 dayjs.extend(relativeTime);
 dayjs.locale('ru');
 
-function capitalize (value: string): string {
+export function capitalize (value: string): string {
   return value.toString().charAt(0).toUpperCase() + value.slice(1);
 }
 
-function toUpperCase (value: string): string {
+export function toUpperCase (value: string): string {
   return value.toString().toUpperCase();
 }
 
-function from (date: string): string {
+export function from (date: string): string {
   if (!date) return 'нет данных';
   return dayjs(date).fromNow();
 }
 
-function toShortLocaleDate (date: string): string {
+/**
+ * Thu Feb 08 2018 22: 56: 48 GMT + 0300(RTZ 2(зима)) --> "08.02.18"
+ * @param {string} Date
+ * @returns {string}
+ */
+export function toShortLocaleDate (date: string): string {
   if (!date) return 'нет данных';
   return new Date(date).toLocaleString('ru-RU', shortDate);
 }
 
-function toTime (date: string): string {
+/**
+ * Thu Feb 08 2018 22: 56: 48 GMT + 0300(RTZ 2(зима)) --> "08.02.18"
+ * @param {string} Date
+ * @returns {string}
+ */
+export function toShortLocaleDateAndTime (date: string): string {
+  if (!date) return 'нет данных';
+  return new Date(date).toLocaleString('ru-RU', {
+    ...shortDate,
+  });
+}
+
+/**
+ * "2017-09-03T18:23:29.078Z" --> 21:23
+ * @param {string} Date
+ * @returns {string}
+ */
+export function toTime (date: string): string {
   if (!date) return '--:--';
   return new Date(date).toLocaleString('ru-RU', time);
 }
 
-function toLocaleDate (date: string): string {
+/**
+ * "2017-09-20T20:32:25.884Z" --> 20 сентября 2017 г., 23:32;
+ * @param {string} Date
+ * @returns {string}
+ */
+export function toLocaleDate (date: string): string {
   if (!date) return 'нет данных';
   return new Date(date).toLocaleString('ru-RU', longDate);
 }
 
-function toLongLocaleDate (date: string): string {
+/**
+ * 20 сентября 2017 г., 23:32
+ * @param {string} Date
+ * @returns {string}
+ */
+export function toLongLocaleDate (date: string): string {
   if (!date) return 'нет данных';
   return new Date(date).toLocaleString('ru-RU', longestDate);
 }
 
-function currencyFormat (val: string | number, loc = 'RUB'): string {
+export function currencyFormat (val: string | number, loc = 'RUB'): string {
   const locale = loc || 'RUB';
   const value = Number(val);
   if (Number.isNaN(value)) return '0';
@@ -55,7 +87,7 @@ function currencyFormat (val: string | number, loc = 'RUB'): string {
   });
 }
 
-function numberFormat (val: string | number): string {
+export function numberFormat (val: string | number): string {
   const value = Number(val);
   if (Number.isNaN(value)) return '0';
   return Number(value).toLocaleString('ru-RU', {
@@ -64,11 +96,11 @@ function numberFormat (val: string | number): string {
   });
 }
 
-function toReadableString (value: string | number): string {
+export function toReadableString (value: string | number): string {
   return filesize(Number(value));
 }
 
-const filters: Dictionary<any> = {
+const filters: Dictionary<Function> = {
   capitalize,
   toUpperCase,
   from,

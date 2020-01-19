@@ -9,7 +9,7 @@
         v-for="( item, index ) in queue.top.right"
         :key="item.id"
         v-bind="{ item, index }"
-        @on-close="close(index, item.positionX, item.positionY)"
+        @close="close(index, item.positionX, item.positionY)"
       />
     </v-slide-y-transition>
 
@@ -22,7 +22,7 @@
         v-for="( item, index ) in queue.bottom.right"
         :key="item.id"
         v-bind="{ item, index }"
-        @on-close="close(index, item.positionX, item.positionY)"
+        @close="close(index, item.positionX, item.positionY)"
       />
     </v-slide-y-reverse-transition>
 
@@ -35,7 +35,7 @@
         v-for="( item, index ) in queue.top.center"
         :key="item.id"
         v-bind="{ item, index }"
-        @on-close="close(index, item.positionX, item.positionY)"
+        @close="close(index, item.positionX, item.positionY)"
       />
     </v-slide-y-transition>
 
@@ -48,7 +48,7 @@
         v-for="( item, index ) in queue.bottom.center"
         :key="item.id"
         v-bind="{ item, index }"
-        @on-close="close(index, item.positionX, item.positionY)"
+        @close="close(index, item.positionX, item.positionY)"
       />
     </v-slide-y-reverse-transition>
 
@@ -61,7 +61,7 @@
         v-for="( item, index ) in queue.top.left"
         :key="item.id"
         v-bind="{ item, index }"
-        @on-close="close(index, item.positionX, item.positionY)"
+        @close="close(index, item.positionX, item.positionY)"
       />
     </v-slide-y-transition>
 
@@ -74,7 +74,7 @@
         v-for="( item, index ) in queue.bottom.left"
         :key="item.id"
         v-bind="{ item, index }"
-        @on-close="close(index, item.positionX, item.positionY)"
+        @close="close(index, item.positionX, item.positionY)"
       />
     </v-slide-y-reverse-transition>
   </div>
@@ -97,7 +97,7 @@ import AppNotificationItem from './AppNotificationItem.vue';
   },
 })
 export default class AppNotification extends Vue {
-  queue: Dictionary<Dictionary<Array<NotificationEvent>>> = {
+  queue: Dictionary<Dictionary<Notification[]>> = {
     top: {
       left: [],
       center: [],
@@ -114,13 +114,17 @@ export default class AppNotification extends Vue {
     this.$bus.on('call-notification', this.notify);
   }
 
-  notify (notification: NotificationEvent): void {
+  notify (notification: Notification): void {
     const { positionX, positionY } = notification;
-    this.queue[positionY][positionX].push(notification);
+    if (positionY && positionX) {
+      this.queue[positionY][positionX].push(notification);
+    }
   }
 
-  close (index: number, positionX: NotificationEvent['positionX'], positionY: NotificationEvent['positionY']) {
-    this.queue[positionY][positionX].splice(index, 1);
+  close (index: number, positionX: Notification['positionX'], positionY: Notification['positionY']) {
+    if (positionY && positionX) {
+      this.queue[positionY][positionX].splice(index, 1);
+    }
   }
 }
 

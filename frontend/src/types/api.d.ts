@@ -1,4 +1,4 @@
-﻿export interface ShoppingCartItem {
+export interface ShoppingCartItem {
   productId?: string;
   quantity?: number;
   price?: number;
@@ -25,7 +25,7 @@ export interface ReportMetaDataModel {
 export interface ReportFieldModel {
   title: string;
   min: number;
-  max: any;
+  max: number;
   value: number;
 }
 

@@ -45,22 +45,24 @@
 
 <script lang="ts">
 
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+import { Vue, Component, Prop, Watch, Ref } from 'vue-property-decorator';
 import { Call } from 'vuex-pathify';
 
-import { Dictionary } from '@/types';
+import { Dictionary, Scalars } from '@/types';
 
 import { required } from '@/utils/validators';
 
 @Component({ inheritAttrs: false })
 export default class SignInForm extends Vue {
   // from router
-  @Prop({ default: '' }) confirm!: string;
-  @Prop({ default: '' }) redirect!: string;
+  @Prop({ default: '' }) confirm!: Scalars['String'];
+  @Prop({ default: '' }) redirect!: Scalars['String'];
 
   // from parent
-  @Prop({ default: false }) inApp!: boolean;
-  @Prop({ default: '' }) email!: string;
+  @Prop({ default: false }) inApp!: Scalars['Boolean'];
+  @Prop({ default: '' }) email!: Scalars['String'];
+
+  @Ref('form') $form!: HTMLFormElement;
 
   showPassword: boolean = false;
 
@@ -74,13 +76,11 @@ export default class SignInForm extends Vue {
   };
 
   get pending () {
-    return false;
-    // return this.$store.state.Auth.pending.signIn;
+    return this.$store.state.Auth.pending.signIn;
   }
 
   get errors (): any {
-    return {};
-    // return this.$store.getters['Auth/getErrorsByKey']('signIn');
+    return this.$store.getters['Auth/getErrorsByKey']('signIn');
   }
 
   @Watch('email', { immediate: true })
@@ -102,10 +102,9 @@ export default class SignInForm extends Vue {
   @Call('Auth/signIn')
   callAuthSignIn!: (payload: any) => Promise<boolean>;
 
-  async signIn () {
+  async signIn (): Promise<void> {
     const { inApp, confirm, redirect, user } = this;
-    // @ts-ignore
-    const isValid = this.$refs.form.validate();
+    const isValid = this.$form.validate();
 
     if (isValid) {
       const result = await this.callAuthSignIn(user);
@@ -115,18 +114,22 @@ export default class SignInForm extends Vue {
         this.resetForm();
 
         if (confirm.length) {
-          return this.$router.push({ name: 'Home' });
+          this.$router.push({ name: 'Home' });
+          return;
         }
 
-        if (redirect) return this.$router.push(redirect);
+        if (redirect) {
+          this.$router.push(redirect);
+          return;
+        }
 
-        if (!inApp) return this.$router.push({ name: 'Home' });
+        if (!inApp) {
+          this.$router.push({ name: 'Home' });
+        }
       } else {
         this.user.password = '';
       }
     }
-
-    return isValid;
   }
 
   resetForm () {
@@ -135,8 +138,8 @@ export default class SignInForm extends Vue {
       email: '',
       password: '',
     };
-    // @ts-ignore
-    this.$refs.form.resetValidation();
+
+    this.$form.resetValidation();
   }
 }
 

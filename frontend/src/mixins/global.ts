@@ -5,7 +5,7 @@ import Vue from 'vue';
 import Environment from '../services/environment';
 
 
-export default Vue.extend({
+export const global = Vue.extend({
   computed: {
     isProduction (): boolean {
       return Environment.isProduction;

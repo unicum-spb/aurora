@@ -1,13 +1,12 @@
-/* eslint-disable func-names */
 import { AxiosRequestConfig } from 'axios';
 import qs, { IStringifyOptions } from 'qs';
 
 import log from '@/services/log';
 
-import { QuantumReportModel } from '@/types/api';
-
 import BaseProvider from './base';
-import { ENDPOINTS } from '../constants';
+
+import { Scalars } from '@/types';
+import { QuantumReportModel } from '@/types/api';
 
 const qsConfig: IStringifyOptions = {
   arrayFormat: 'brackets',
@@ -15,11 +14,11 @@ const qsConfig: IStringifyOptions = {
 };
 
 class Reports extends BaseProvider {
-  getUrl (userId: string) {
+  getUrl (userId: Scalars['String']) {
     return `/users/${userId}/reports`;
   }
 
-  async create ({ userId, formData }: { userId: string, formData: FormData }) {
+  async create ({ userId, formData }: { userId: Scalars['String'], formData: FormData }) {
     const options: AxiosRequestConfig = {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -38,21 +37,8 @@ class Reports extends BaseProvider {
     }
   }
 
-  async getAll (userId: string) {
-    try {
-      const { data } = await this.get<Array<QuantumReportModel>>(
-        this.getUrl(userId)
-      );
-      log('Reports/get', { userId }, data);
-      return data;
-    } catch (error) {
-      console.error('Reports/get', error);
-      throw error;
-    }
-  }
-
-  async getById (userId: string, reportId: string) {
-    const uri = this.getUrl(userId);
+  async getById (userId: Scalars['String'], reportId: QuantumReportModel['id']) {
+    const uri = `${this.getUrl(userId)}.json`;
     const query = qs.stringify({ filter: { where: { id: reportId } } }, qsConfig);
     const url = [ uri, query ].join('?');
 
@@ -66,7 +52,38 @@ class Reports extends BaseProvider {
     }
   }
 
-  async getByListOfId (userId: string, reportIds: ReadonlyArray<string>) {
+  async removeById (userId: Scalars['String'], reportId: Scalars['String']) {
+    const uri = `${this.getUrl(userId)}`;
+    const query = qs.stringify({ filter: { where: { id: reportId } } }, qsConfig);
+    const url = [ uri, query ].join('?');
+
+    try {
+      const { data } = await this.remove<Scalars['Number']>(url);
+      log('Reports/removeById', { userId, reportId }, data);
+      return data;
+    } catch (error) {
+      console.error('Reports/removeById', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Actions with collections
+   */
+  async getAll (userId: Scalars['String']) {
+    try {
+      const { data } = await this.get<Array<QuantumReportModel>>(
+        `${this.getUrl(userId)}.json`
+      );
+      log('Reports/getAll', { userId }, data);
+      return data;
+    } catch (error) {
+      console.error('Reports/getAll', error);
+      throw error;
+    }
+  }
+
+  async getByListOfId (userId: Scalars['String'], reportIds: ReadonlyArray<Scalars['String']>) {
     const reports = reportIds.map(reportId => this.getById(userId, reportId));
 
     try {
@@ -75,6 +92,40 @@ class Reports extends BaseProvider {
       return result;
     } catch (error) {
       console.error('Reports/getByListOfId', error);
+      throw error;
+    }
+  }
+
+  async removeByListOfId (userId: Scalars['String'], reportIds: ReadonlyArray<Scalars['String']>) {
+    const reports = reportIds.map(reportId => this.removeById(userId, reportId));
+
+    try {
+      const result = await Promise.all(reports);
+      log('Reports/removeByListOfId', { userId, reportIds }, result);
+      return result;
+    } catch (error) {
+      console.error('Reports/removeByListOfId', error);
+      throw error;
+    }
+  }
+
+  async getTypes (userId: Scalars['String']) {
+    const preResult = [
+      {
+        id: 'qwidijwdiq8273812h1d',
+        alias: 'quantum',
+        title: 'Квантово-резонансный анализатор',
+        type: 'application/zip'
+      },
+    ];
+
+    try {
+      // const result = await this.get(`${ this.getUrl(userId) }/types`)
+      const result = await Promise.resolve(preResult);
+      log('Reports/getTypes', { userId }, result);
+      return result;
+    } catch (error) {
+      console.error('Reports/getTypes', error);
       throw error;
     }
   }

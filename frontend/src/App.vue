@@ -5,20 +5,20 @@
     <App-Sidebar />
 
     <v-fade-transition
-      appear
-      mode="out-in"
       :duration="200"
+      mode="out-in"
+      appear
     >
       <router-view v-if="!pending" />
     </v-fade-transition>
 
-    <!-- <App-Notification /> -->
+    <App-Notification />
 
-    <!-- <App-Offline-Snackbar /> -->
+    <App-Offline-Snackbar />
 
-    <!-- <App-Network-Error-SnackBar /> -->
+    <App-Network-Error-SnackBar />
 
-    <!-- <App-Modal-Dialog /> -->
+    <App-Modal-Dialog />
   </v-app>
 </template>
 
@@ -29,13 +29,17 @@ import { Route } from 'vue-router/types';
 import { Vue, Component, Watch } from 'vue-property-decorator';
 import { Get, Sync, Call } from 'vuex-pathify';
 
+import { Scalars } from './types';
+
 import EventService from '@/services/event';
 
 import AppHeader from './components/layout/AppHeader/index.vue';
 import AppSidebar from './components/layout/AppSidebar.vue';
+import AppModalDialog from './components/layout/AppModalDialog.vue';
 import AppNotification from './components/layout/AppNotification/index.vue';
 import AppOfflineSnackbar from './components/layout/AppOfflineSnackbar.vue';
 import AppNetworkErrorSnackBar from './components/layout/AppNetworkErrorSnackBar.vue';
+import { Alert } from './types/alert';
 
 
 @Component({
@@ -43,40 +47,49 @@ import AppNetworkErrorSnackBar from './components/layout/AppNetworkErrorSnackBar
   components: {
     AppHeader,
     AppSidebar,
+    AppModalDialog,
     AppNotification,
     AppOfflineSnackbar,
     AppNetworkErrorSnackBar,
   },
 })
 export default class AuroraApp extends Vue {
-  get pending () {
+  public get pending () {
     return this.$store.state.Auth.pending.getCurrentUser;
   }
 
-  @Watch('$route', { immediate: true, deep: true })
-  onRouteChange ({ name }: Route): void {
-  }
-
   @Watch('dark', { immediate: true })
-  onDarkChange (val: boolean) {
+  public onDarkChange (val: Scalars['Boolean']) {
     this.$vuetify.theme.dark = val;
   }
 
   @Call('Auth/getCurrentUser')
-  callAuthGetCurrentUser!: () => Promise<any>;
+  public callAuthGetCurrentUser!: () => Promise<any>;
 
   created () {
-    EventService.on('authentication-error', (data: any) => this.$store.dispatch('Auth/signOut'));
+    // Проброс событий из EventService в $bus
+    EventService.on('authentication-error', (data: any) => {
+      this.$store.dispatch('Auth/signOut');
+      window.location.href = '/auth/login';
+    });
+
+    EventService.on('change-language', (data: any) => this.$bus.emit('change-language', data));
+    EventService.on('internal-server-error', (data: any) => this.$bus.emit('internal-server-error', data));
+    EventService.on('token-auth-state', (data: any) => this.$bus.emit('token-auth-state', data));
+    EventService.on('call-notification', (data: Notification) => this.$bus.emit('call-notification', data));
+    EventService.on('call-alert', (data: Alert) => this.$bus.emit('call-alert', data));
+
+    this.$bus.on('on-esc', (event: KeyboardEvent) => EventService.emit('on-esc', event));
 
     this.callAuthGetCurrentUser();
 
-    document.addEventListener('keyup', (event: KeyboardEvent): void => {
+    document.addEventListener('keyup', (event: KeyboardEvent) => {
       if (!event.key) return;
 
       const key = event.key.toLowerCase();
       const isEscape = key === 'escape';
 
-      if (isEscape) this.$bus.emit('on-esc', event);
+      if (isEscape) { this.$bus.emit('on-esc', event); }
     });
   }
 }
@@ -149,6 +162,11 @@ select:-webkit-autofill:focus {
   font-size: 16px;
   -webkit-text-fill-color: #000;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+.v-dialog > .v-card > .v-card__title {
+  padding: 16px !important;
+  padding-right: 16px !important;
 }
 
 .v-btn {

@@ -22,20 +22,27 @@ const routes: Array<RouteConfig> = [
         path: '',
         name: nameSpace.with('list'),
         component: ReportRoot,
-        props: ({ query }) => ({ ...query }),
+        props: ({ query }) => ({
+          filter: query.filter,
+        }),
       },
 
       {
         path: 'create',
         name: nameSpace.with('create'),
-        component: ReportCreate,
+        redirect: {
+          name: nameSpace.with('list'),
+          query: { 'add-dialog': 'true' }
+        }
       },
 
       {
         path: 'show/:reportId',
         name: nameSpace.with('id'),
         component: ReportId,
-        props: ({ params }) => ({ ...params }),
+        props: ({ params }) => ({
+          reportId: params.reportId,
+        }),
       },
 
       {

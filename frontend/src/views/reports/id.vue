@@ -18,18 +18,28 @@
             <th width="56px" />
             <th class="px-0">
               <v-toolbar flat>
-                <v-toolbar-title>{{ selected.meta.date | toLongLocaleDate }}</v-toolbar-title>
+                <v-row no-gutters>
+                  <v-col>
+                    <v-toolbar-title>{{ selected.meta.date | toLongLocaleDate }}</v-toolbar-title>
+                  </v-col>
 
-                <v-spacer />
+                  <v-spacer />
 
-                <v-text-field
-                  v-model="search"
-                  append-icon="search"
-                  label="Search"
-                  single-line
-                  hide-details
-                  outlined
-                />
+                  <v-col>
+                    <v-text-field
+                      v-model="search"
+                      prepend-inner-icon="search"
+                      :label="'search'"
+                      single-line
+                      hide-details
+                      solo
+                      flat
+                      outlined
+                      clearable
+                      dense
+                    />
+                  </v-col>
+                </v-row>
               </v-toolbar>
             </th>
           </tr>
@@ -42,7 +52,14 @@
             :headers="innerHeaders"
             :items="item.fields"
             hide-default-footer
-          />
+          >
+            <template v-slot:item.relative="{ item }">
+              <img
+                :src="`/img/${ item.relative }.gif`"
+                alt="item.relative"
+              >
+            </template>
+          </v-data-table>
         </td>
       </template>
     </v-data-table>
@@ -55,7 +72,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 
 import { Call } from 'vuex-pathify';
 import { DataIteratorHeader } from '@/types/vuetify';
-import { QuantumReportModel } from '@/types/api';
+import { QuantumReportModel, ReportResultModel } from '@/types/api';
 
 
 @Component({ inheritAttrs: false })
@@ -64,7 +81,7 @@ export default class ReportDetail extends Vue {
   public reportId!: string;
 
   public search: string = '';
-  public expanded: Array<any> = [];
+  public expanded: Array<ReportResultModel> = [];
   public singleExpand: boolean = false;
 
   public headers: ReadonlyArray<DataIteratorHeader> = [
@@ -102,6 +119,12 @@ export default class ReportDetail extends Vue {
       value: 'max',
       sortable: false,
     },
+    {
+      text: 'relative',
+      align: 'center',
+      value: 'relative',
+      sortable: false,
+    },
   ]
 
   public get selected () {
@@ -122,11 +145,15 @@ export default class ReportDetail extends Vue {
 
 <style lang="scss">
 
-.v-data-table__expanded__content > td {
-  padding-left: 56px !important;
+.v-data-table__expanded__content {
+  box-shadow: none !important;
 
-  tbody tr:last-child td {
-    border-bottom: none !important;
+  > td {
+    padding-left: 56px !important;
+
+    tbody tr:last-child td {
+      border-bottom: none !important;
+    }
   }
 }
 

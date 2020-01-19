@@ -56,10 +56,10 @@
 
 <script lang="ts">
 
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Component, Prop, Ref } from 'vue-property-decorator';
 import { Call } from 'vuex-pathify';
 
-import { Dictionary } from '@/types';
+import { Dictionary, Scalars } from '@/types';
 import { Pending } from '@/types/shared.d';
 
 import { required } from '@/utils/validators';
@@ -67,9 +67,11 @@ import { required } from '@/utils/validators';
 
 @Component({ inheritAttrs: false })
 export default class SignUpForm extends Vue {
-  showPassword: boolean = false;
+  @Ref('form') $form!: HTMLFormElement;
 
-  user: Dictionary<string> = {
+  showPassword: Scalars['Boolean'] = false;
+
+  user: Dictionary<Scalars['String']> = {
     email: '',
     password: '',
     passwordConfirmation: '',
@@ -81,21 +83,21 @@ export default class SignUpForm extends Vue {
   };
 
   get pending () {
-    return false;
-    // return this.$store.state.Auth.pending.signUp;
+    return this.$store.state.Auth.pending.signUp;
   }
 
   get errors (): any {
-    return {};
-    // return this.$store.getters['Auth/getErrorsByKey']('signUp');
+    return this.$store.getters['Auth/getErrorsByKey']('signUp');
   }
 
-  @Call('Auth/signUp') callAuthSignUp!: (payload: any) => Promise<any>;
-  @Call('Workspace/setCurrent') callWorkspaceSet!: (payload: any) => Promise<void>;
+  @Call('Auth/signUp')
+  callAuthSignUp!: (payload: any) => Promise<any>;
+
+  @Call('Workspace/setCurrent')
+  callWorkspaceSet!: (payload: any) => Promise<void>;
 
   async signUp () {
-    // @ts-ignore
-    const isValid = this.$refs.form.validate();
+    const isValid = this.$form.validate();
     const { passwordConfirmation, ...user } = this.user;
 
     if (isValid) {

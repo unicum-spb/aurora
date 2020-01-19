@@ -38,6 +38,7 @@ module.exports = {
       }
     ],
     'arrow-parens': 'off',
+    'import/extensions': ['ignorePackages'],
     'keyword-spacing': [
       'error',
       { before: true, after: true },

@@ -1,4 +1,4 @@
-export interface Notification {
+export interface NotificationEvent {
   type?: 'info' | 'error' | 'success';
   positionX?: 'left' | 'right' | 'center';
   positionY?: 'top' | 'bottom';
@@ -7,7 +7,7 @@ export interface Notification {
   timeout?: number;
 }
 
-export interface NotificationEvent {
+export interface Notification {
   id: string;
   type?: 'info' | 'error' | 'success';
   positionX: 'left' | 'right' | 'center';

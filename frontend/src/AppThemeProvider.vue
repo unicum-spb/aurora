@@ -3,7 +3,7 @@
     @click.exact="computedTheme = !computedTheme"
   >
     <v-list-item-action>
-      <v-icon>{{ computedTheme ? 'brightness_4' : 'brightness_low' }}</v-icon>
+      <v-icon>{{ computedTheme ? 'brightness_4' : 'brightness_7' }}</v-icon>
     </v-list-item-action>
 
     <v-list-item-title>

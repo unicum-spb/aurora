@@ -1,12 +1,10 @@
 <template>
-  <v-card>
+  <v-card class="report-list">
     <v-toolbar
       color="light-blue"
       light
     >
-      <v-toolbar-title>
-        My files
-      </v-toolbar-title>
+      <v-toolbar-title>{{ $t('reports.list.title') }}</v-toolbar-title>
 
       <v-spacer />
 
@@ -18,22 +16,29 @@
       </v-btn>
 
       <template v-slot:extension>
-        <v-btn
-          fab
-          bottom
-          left
-          absolute
-          @click="dialog = !dialog"
-        >
-          <v-icon>add</v-icon>
-        </v-btn>
+        <v-fab-transition>
+          <v-btn
+            v-if="!dialog"
+            fab
+            bottom
+            left
+            absolute
+            @click="dialog = !dialog"
+          >
+            <v-icon>add</v-icon>
+          </v-btn>
+        </v-fab-transition>
 
         <v-spacer />
 
-        <v-fade-transition>
+        <v-fade-transition
+          tag="div"
+          group
+        >
           <v-btn
-            v-if="selected.length"
+            key="compare"
             :to="compareDestination"
+            :disabled="selected.length < 2"
             class="mx-2"
           >
             <v-icon
@@ -42,7 +47,19 @@
             >
               compare_arrows
             </v-icon>
-            Сравнить
+            compare
+          </v-btn>
+
+          <v-btn
+            key="delete"
+            :disabled="!selected.length"
+            @click.stop="deleteReports(selectedReportIds)"
+          >
+            <v-icon
+              small
+            >
+              delete
+            </v-icon>
           </v-btn>
         </v-fade-transition>
       </template>
@@ -58,22 +75,16 @@
       item-key="id"
       show-select
       class="elevation-1"
-      @click:row="onReportRowClick"
     >
       <template v-slot:top>
-        <!-- <v-switch
-            v-model="singleSelect"
-            label="Single select"
-            class="pa-3"
-          /> -->
-        <div class="py-5" />
+        <div class="py-4" />
       </template>
 
-      <template v-slot:item.data-table-select="{ isSelected, select }">
+      <template v-slot:header.data-table-select="{ on, props }">
         <v-simple-checkbox
-          color="green"
-          :value="isSelected"
-          @input="select($event)"
+          :disabled="!reports.length"
+          v-bind="props"
+          v-on="on"
         />
       </template>
 
@@ -83,56 +94,64 @@
 
       <template v-slot:item.actions="{ item }">
         <v-btn
-          @click.stop="deleteReport(item.id)"
+          icon
+          @click.stop="viewReport(item)"
         >
-          <v-icon
-            small
-          >
-            delete
+          <v-icon>
+            remove_red_eye
           </v-icon>
         </v-btn>
       </template>
 
       <template v-slot:no-data>
-        NO DATA HERE!
+        {{ $t('reports.list.no_data') }}
       </template>
 
       <template v-slot:no-results>
-        NO RESULTS HERE!
+        {{ $t('reports.list.no_results') }}
       </template>
     </v-data-table>
 
-    <v-dialog
-      v-model="dialog"
-      max-width="500px"
+    <Dialog
+      v-if="dialog"
+      max-width="420px"
+      :persistent="pending"
+      @close="dialog = false"
     >
-      <Upload-Report-Form />
-    </v-dialog>
+      <Report-Upload-Form @close="dialog = false" />
+    </Dialog>
   </v-card>
 </template>
 
 <script lang="ts">
 
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Mixins, Watch } from 'vue-property-decorator';
 import { Call } from 'vuex-pathify';
 
-import { Location } from 'vue-router/types';
+import { Location, Route } from 'vue-router/types';
+import { Scalars } from '@/types';
 import { QuantumReportModel } from '@/types/api';
 import { DataIteratorHeader } from '@/types/vuetify';
 
-import UploadReportForm from '@/components/forms/UploadReport.vue';
+import { AlertMixin, NotifyMixin } from '@/mixins';
 
+import ReportUploadForm from '@/components/forms/ReportUpload.vue';
+import Dialog from '@/components/dialogs/base.vue';
 
 @Component({
   inheritAttrs: false,
   components: {
-    UploadReportForm
+    ReportUploadForm,
+    Dialog,
   }
 })
-export default class ReportsList extends Vue {
+export default class ReportsList extends Mixins(AlertMixin, NotifyMixin) {
   public dialog: boolean = false;
+
   public singleSelect: boolean = false;
+
   public selected: Array<QuantumReportModel> = [];
+
   public headers: ReadonlyArray<DataIteratorHeader> = [
     {
       text: 'Дата в отчёте',
@@ -166,11 +185,17 @@ export default class ReportsList extends Vue {
     },
   ];
 
+  public get selectedReportIds () {
+    return this.selected
+      .map(report => report.id)
+      .reverse();
+  }
+
   public get compareDestination (): Location {
     return {
       name: 'Reports/compare',
       query: {
-        reportIds: this.selected.map(report => report.id)
+        reportIds: this.selectedReportIds
       }
     };
   }
@@ -183,21 +208,74 @@ export default class ReportsList extends Vue {
     return this.$store.state.Reports.pending.get;
   }
 
+  public get pending () {
+    return this.$store.state.Reports.pending.create;
+  }
+
+  @Watch('$route', { deep: true, immediate: true })
+  public onRouteChange ({ name, query }: Route) {
+    if (query['add-dialog']) {
+      this.dialog = true;
+      this.$router.replace({ name: 'Reports/list' });
+    }
+  }
+
   @Call('Reports/getAll')
   public callReportsGetAll!: () => Promise<boolean>;
 
-  public onReportRowClick (report: QuantumReportModel) {
-    return this.$router.push({
+  @Call('Reports/removeByListOfId')
+  public callReportsRemoveByListOfId!: (reportIds: ReadonlyArray<QuantumReportModel['id']>) => Promise<boolean>;
+
+  /**
+   * deleteReports
+   * call remove selected reports
+   */
+  public async deleteReports (selectedIds: Array<QuantumReportModel['id']>) {
+    try {
+      await this.$alert({
+        title: 'dialogs.removing.title',
+        message: 'dialogs.removing.message',
+      });
+    } catch (cancel) {
+      this.clearSelectedReports();
+      return;
+    }
+
+    try {
+      await this.callReportsRemoveByListOfId(selectedIds);
+
+      this.$notify({
+        type: 'info',
+        translate: 'report.removed',
+        timeout: 5000
+      });
+
+      this.clearSelectedReports();
+      this.callReportsGetAll();
+    } catch (error) {
+      this.$notify({
+        type: 'error',
+        translate: 'failed',
+        timeout: 5000
+      });
+    }
+  }
+
+  /**
+   * viewReport
+   */
+  public viewReport ({ id: reportId }: QuantumReportModel) {
+    this.$router.push({
       name: 'Reports/id',
-      params: { reportId: report.id },
+      params: { reportId },
     });
   }
 
   /**
-   * deleteReport
+   * clearSelectedReports
    */
-  public deleteReport (report: QuantumReportModel) {
-    console.log('deleteReport - ', report);
+  public clearSelectedReports () {
+    this.selected.splice(0, this.selected.length);
   }
 
   async created () {
@@ -209,12 +287,20 @@ export default class ReportsList extends Vue {
 
 <style lang="scss">
 
-.v-data-table__expanded__content > td {
-  padding-left: 56px !important;
+.report-list {
+  .v-data-table__expanded__content > td {
+    padding-left: 56px !important;
 
-  tbody tr:last-child td {
-    border-bottom: none !important;
+    tbody tr:last-child td {
+      border-bottom: none !important;
+    }
+  }
+
+  .v-input--selection-controls {
+    margin-top: 0;
+    padding-top: 0;
   }
 }
+
 
 </style>

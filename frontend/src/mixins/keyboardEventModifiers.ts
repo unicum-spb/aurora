@@ -20,7 +20,7 @@ const KEY_X: number = 88;
 
 
 @Component({ inheritAttrs: false })
-export default class KeyboardEventModifiers extends Vue {
+export class KeyboardEventModifiers extends Vue {
   protected isNumber (event: KeyboardEvent): boolean {
     if (event) {
       const { keyCode } = event;

@@ -5,6 +5,8 @@ import Home from '@/views/home/index.vue';
 
 import auth from './auth';
 import reports from './reports';
+import account from './account';
+
 
 const routes: Array<RouteConfig> = [
   {
@@ -23,6 +25,7 @@ const routes: Array<RouteConfig> = [
 
   ...auth,
   ...reports,
+  ...account,
 
   {
     path: '*',
