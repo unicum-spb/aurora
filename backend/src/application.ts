@@ -1,24 +1,36 @@
+import path from 'path';
+
 import { BootMixin } from '@loopback/boot';
 import { ApplicationConfig, BindingKey } from '@loopback/core';
 import { RepositoryMixin } from '@loopback/repository';
 import { RestApplication } from '@loopback/rest';
 import { ServiceMixin } from '@loopback/service-proxy';
-import { MyAuthenticationSequence } from './sequence';
-import { RestExplorerBindings, RestExplorerComponent, } from '@loopback/rest-explorer';
-import { TokenServiceBindings, UserServiceBindings, TokenServiceConstants, ReportServiceBindings, } from './keys';
-import { JWTService } from './services/jwt-service';
-
-import { MyReportService, MyUserService } from './services';
-
-import path from 'path';
-import { AuthenticationComponent, registerAuthenticationStrategy, } from '@loopback/authentication';
-import { PasswordHasherBindings } from './keys';
-import { BcryptHasher } from './services/hash.password.bcryptjs';
-import { JWTAuthenticationStrategy } from './authentication-strategies/jwt-strategy';
-import { SECURITY_SCHEME_SPEC } from './utils/security-spec';
+import { RestExplorerBindings, RestExplorerComponent } from '@loopback/rest-explorer';
 import { AuthorizationComponent, AuthorizationTags, } from '@loopback/authorization';
-import { createEnforcer } from './services/enforcer';
-import { CasbinAuthorizationProvider } from './services/authorizor';
+import { AuthenticationComponent, registerAuthenticationStrategy, } from '@loopback/authentication';
+
+
+import { MyAuthenticationSequence } from './sequence';
+
+import {
+  TokenServiceBindings,
+  UserServiceBindings,
+  TokenServiceConstants,
+  ReportServiceBindings,
+  PasswordHasherBindings
+} from './keys';
+
+import {
+  JWTService,
+  MyUserService,
+  MyReportService,
+  BcryptHasher,
+  CasbinAuthorizationProvider,
+  createEnforcer
+} from './services';
+
+import { JWTAuthenticationStrategy } from './authentication-strategies';
+import { SECURITY_SCHEME_SPEC } from './utils/security-spec';
 
 /**
  * Information from package.json
@@ -28,11 +40,12 @@ export interface PackageInfo {
   version: string;
   description: string;
 }
+
 export const PackageKey = BindingKey.create<PackageInfo>('application.package');
 
 const pkg: PackageInfo = require('../package.json');
 
-export class ShoppingApplication extends BootMixin(
+export class AuroraApplication extends BootMixin(
   ServiceMixin(RepositoryMixin(RestApplication)),
 ) {
   constructor(options?: ApplicationConfig) {
@@ -76,6 +89,7 @@ export class ShoppingApplication extends BootMixin(
     this.bind(RestExplorerBindings.CONFIG).to({
       path: '/explorer',
     });
+
     this.component(RestExplorerComponent);
 
     this.projectRoot = __dirname;
@@ -104,7 +118,7 @@ export class ShoppingApplication extends BootMixin(
 
     this.bind(TokenServiceBindings.TOKEN_SERVICE).toClass(JWTService);
 
-    // // Bind bcrypt hash services
+    // Bind bcrypt hash services
     this.bind(PasswordHasherBindings.ROUNDS).to(10);
     this.bind(PasswordHasherBindings.PASSWORD_HASHER).toClass(BcryptHasher);
 

@@ -6,5 +6,8 @@
 export * from './report-service';
 export * from './user-service';
 export * from './jwt-service';
+export * from './hash.password.bcryptjs'
+export * from './enforcer'
+export * from './authorizor'
 // export * from './recommender-rest.service';
 // export * from './recommender-grpc.service';

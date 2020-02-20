@@ -1,7 +1,8 @@
 
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-import { JSON } from '@/types/shared.d';
+
+import { Dictionary } from '@/types';
 
 Vue.use(VueI18n);
 
@@ -12,7 +13,7 @@ const {
 
 function loadLocaleMessages () {
   const locales = require.context('./', true, /[A-Za-z0-9-_,\s]+\.ts$/i);
-  const messages: JSON = {};
+  const messages: Dictionary<any> = {};
   locales.keys().forEach((key) => {
     if (key === './index.ts') return;
     const matched = key.match(/([A-Za-z0-9-_]+)\./i);

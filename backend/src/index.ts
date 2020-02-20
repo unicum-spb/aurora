@@ -1,11 +1,12 @@
 import { ApplicationConfig } from '@loopback/core';
 
-import { ShoppingApplication } from './application';
-export { ShoppingApplication, PackageInfo, PackageKey } from './application';
+import { AuroraApplication } from './application';
 import { MultipartFormDataBodyParser } from './utils/multipart-form-data-body-parser';
 
+export { AuroraApplication, PackageInfo, PackageKey } from './application';
+
 export async function main(options?: ApplicationConfig) {
-  const app = new ShoppingApplication(options);
+  const app = new AuroraApplication(options);
 
   app.bodyParser(MultipartFormDataBodyParser);
 
@@ -13,6 +14,7 @@ export async function main(options?: ApplicationConfig) {
   await app.start();
 
   const url = app.restServer.url;
+
   console.log(`Server is running at ${url}`);
   console.log(`Try ${url}/ping`);
 
