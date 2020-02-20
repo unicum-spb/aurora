@@ -3,8 +3,8 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
-import {HttpErrors} from '@loopback/rest';
-import {promisify} from 'util';
+import { HttpErrors } from '@loopback/rest';
+import { promisify } from 'util';
 import debugFactory from 'debug';
 const debug = debugFactory('loopback:example:shopping');
 
@@ -44,7 +44,7 @@ export interface RetryOptions {
  */
 export async function retry<T>(
   task: Task<T>,
-  {maxTries = 10, interval = 100}: RetryOptions = {},
+  { maxTries = 10, interval = 100 }: RetryOptions = {},
 ): Promise<T> {
   if (maxTries < 1) maxTries = 1;
   let triesLeft = maxTries;
