@@ -1,4 +1,4 @@
-import { Request, RestBindings, ResponseObject, post, requestBody } from '@loopback/rest';
+import { Request, RestBindings, ResponseObject, requestBody, put } from '@loopback/rest';
 import { inject } from '@loopback/context';
 
 import Bot from '../bot';
@@ -32,7 +32,7 @@ export class TelegramController {
   constructor(@inject(RestBindings.Http.REQUEST) private req: Request) { }
 
   // Map to `GET /ping`
-  @post('/telegram', {
+  @put('/telegram', {
     responses: {
       '200': PING_RESPONSE,
     },
